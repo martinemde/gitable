@@ -2,12 +2,12 @@
 
 Like Addressable::URI but for Git
 
-require 'gitable/uri'
-uri = Gitable::URI.parse('git@github.com:martinemde/gitable.git')
+    require 'gitable/uri'
+    uri = Gitable::URI.parse('git@github.com:martinemde/gitable.git')
 
-uri.path # => 'martinemde/gitable.git'
-uri.user # => 'git'
-uri.host # => 'github.com'
+    uri.path # => 'martinemde/gitable.git'
+    uri.user # => 'git'
+    uri.host # => 'github.com'
 
 Works with any valid Git uri.
 
