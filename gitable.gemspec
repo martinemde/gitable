@@ -23,6 +23,8 @@ Gem::Specification.new do |s|
      "LICENSE",
      "README.rdoc",
      "Rakefile",
+     "VERSION.yml",
+     "gitable.gemspec",
      "lib/gitable.rb",
      "lib/gitable/scp_uri.rb",
      "lib/gitable/uri.rb",
