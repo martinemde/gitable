@@ -1,19 +1,40 @@
 = Gitable
 
-Like Addressable::URI but for Git
+== +Addressable::URI+ for Git.
+
+Works with any valid Git URI.
+
+== Example!?
 
     require 'gitable/uri'
     uri = Gitable::URI.parse('git@github.com:martinemde/gitable.git')
 
-    uri.path # => 'martinemde/gitable.git'
-    uri.user # => 'git'
-    uri.host # => 'github.com'
+    uri.path   # => 'martinemde/gitable.git'
+    uri.user   # => 'git'
+    uri.host   # => 'github.com'
 
-Works with any valid Git uri.
+    uri.to_s   # => 'git@github.com:martinemde/gitable.git'
+    uri.project_name   # => 'gitable'
+    uri.kind_of?(Addressable::URI)   # => true
+
+== heuristic_parse
+
+You can use +Gitable::URI.heuristic_parse+ to take user input.
+
+Currently this supports the mistake of copying the url bar instead of the git
+uri for a few of the popular git webhosts. It also runs through Addressable's
+heuristic_parse so it will correct some poorly typed URIs.
+
+    uri = Gitable::URI.heuristic_parse('http://github.com:martinemde/gitable')
+    uri.to_s   # => 'git://github.com/martinemde/gitable.git'
+
+Heuristic parse is currently fairly limited. If the url doesn't end in .git, it
+switches +http://+ to +git://+ and adds .git to the basename. This works fine for
+github.com and gitorious.org.
 
 == That's it?
 
-yep. What else did you expect?
+yep. What else did you expect? (let me know or write a patch)
 
 == Copyright
 
