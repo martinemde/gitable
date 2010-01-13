@@ -16,8 +16,10 @@ tmtags
 ## PROJECT::GENERAL
 gbin
 coverage
+doc
 rdoc
 pkg
 vendor/gems
+.yardoc
 
 ## PROJECT::SPECIFIC

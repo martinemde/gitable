@@ -5,7 +5,7 @@ disable_system_gems
 
 gem 'addressable', :require_as => 'addressable/uri'
  
-only :test do
+only :development do
   gem 'jeweler'
   gem 'bundler'
   gem 'rspec', :require_as => 'spec'
@@ -13,4 +13,5 @@ only :test do
   gem 'rake'
   gem 'rcov'
   gem 'ruby-debug'
+  gem 'yard'
 end

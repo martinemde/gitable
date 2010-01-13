@@ -1,4 +1,4 @@
-require 'rubygems'
+Bundler.require_env
 require 'rake'
 
 begin
@@ -10,6 +10,15 @@ begin
     gem.email = "martin.emde@gmail.com"
     gem.homepage = "http://github.com/martinemde/gitable"
     gem.authors = ["Martin Emde"]
+
+    manifest = Bundler::Environment.load(File.dirname(__FILE__) + '/Gemfile')
+    manifest.dependencies.each do |d|
+      if d.only && d.only.include?('development')
+        gem.add_development_dependency d.name, d.version
+      else
+        gem.add_dependency d.name, d.version
+      end
+    end
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

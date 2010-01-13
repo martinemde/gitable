@@ -89,6 +89,12 @@ describe Gitable::URI do
       }.should raise_error(TypeError)
     end
 
+    it "raises an Gitable::URI::InvalidURIError on a bad uri" do
+      lambda {
+        Gitable::URI.parse("http://")
+      }.should raise_error(Gitable::URI::InvalidURIError)
+    end
+
     describe_uri "rsync://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
@@ -375,6 +381,31 @@ describe Gitable::URI do
         :basename     => "gitable.git",
         :project_name => "gitable",
       })
+    end
+  end
+
+  describe ".heuristic_parse" do
+    it "returns a Gitable::URI" do
+      uri = "http://github.com/martinemde/gitable"
+      Gitable::URI.heuristic_parse(uri).should be_a_kind_of(Gitable::URI)
+    end
+
+    it "guesses git://github.com/martinemde/gitable.git if I pass in the url bar" do
+      uri = "http://github.com/martinemde/gitable"
+      gitable = Gitable::URI.heuristic_parse(uri)
+      gitable.to_s.should == "git://github.com/martinemde/gitable.git"
+    end
+
+    it "isn't upset by trailing slashes" do
+      uri = "http://github.com/martinemde/gitable/"
+      gitable = Gitable::URI.heuristic_parse(uri)
+      gitable.to_s.should == "git://github.com/martinemde/gitable.git/"
+    end
+
+    it "handles URIs with the name of the project in the path twice" do
+      uri = "http://gitorious.org/project/project"
+      gitable = Gitable::URI.heuristic_parse(uri)
+      gitable.to_s.should == "git://gitorious.org/project/project.git"
     end
   end
 end
