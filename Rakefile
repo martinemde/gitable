@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "gitable"
-    gem.summary = %Q{Like Addressable::URI but for Git}
-    gem.description = %Q{Use this like an Addressable::URI that understands the various git URI formats.}
+    gem.summary = %Q{Addressable::URI for Git}
+    gem.description = %Q{It's like Addressable::URI but for Git. Gitable.}
     gem.email = "martin.emde@gmail.com"
     gem.homepage = "http://github.com/martinemde/gitable"
     gem.authors = ["Martin Emde"]
