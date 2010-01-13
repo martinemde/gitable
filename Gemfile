@@ -6,6 +6,7 @@ disable_system_gems
 gem 'addressable', :require_as => 'addressable/uri'
  
 only :test do
+  gem 'jeweler'
   gem 'bundler'
   gem 'rspec', :require_as => 'spec'
   gem 'ZenTest'
