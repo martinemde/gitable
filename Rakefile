@@ -1,3 +1,4 @@
+require 'bundler'
 Bundler.require_env
 require 'rake'
 
@@ -11,12 +12,10 @@ begin
     gem.homepage = "http://github.com/martinemde/gitable"
     gem.authors = ["Martin Emde"]
 
-    manifest = Bundler::Environment.load(File.dirname(__FILE__) + '/Gemfile')
-    manifest.dependencies.each do |d|
-      if d.only && d.only.include?('development')
-        gem.add_development_dependency d.name, d.version
-      else
-        gem.add_dependency d.name, d.version
+    bundle = Bundler::Bundle.load(File.dirname(__FILE__) + '/Gemfile')
+    bundle.environment.dependencies.each do |d|
+      if d.only && d.only.include?('runtime')
+        gem.add_dependency d.name, d.version.to_s
       end
     end
   end

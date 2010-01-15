@@ -3,9 +3,12 @@ source 'http://gemcutter.org'
 bin_path 'gbin'
 disable_system_gems
 
-gem 'addressable', :require_as => 'addressable/uri'
+only :runtime do
+  gem 'addressable', :require_as => 'addressable/uri'
+end
  
 only :development do
+  gem 'bundler'
   gem 'jeweler'
   gem 'bundler'
   gem 'rspec', :require_as => 'spec'

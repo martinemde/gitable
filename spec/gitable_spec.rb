@@ -125,6 +125,15 @@ describe Gitable::URI do
       })
     end
 
+    describe_uri "http://12.34.56.78:8888/path/to/repo.git/" do
+      it { subject.to_s.should == @uri }
+      it_sets expected.merge({
+        :scheme   => "http",
+        :host     => "12.34.56.78",
+        :port     => 8888,
+      })
+    end
+
     describe_uri "https://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
@@ -137,6 +146,13 @@ describe Gitable::URI do
       it_sets expected.merge({
         :scheme   => "https",
         :port     => 8888,
+      })
+    end
+
+    describe_uri "git+ssh://host.xz/path/to/repo.git/" do
+      it { subject.to_s.should == @uri }
+      it_sets expected.merge({
+        :scheme   => "git+ssh",
       })
     end
 
