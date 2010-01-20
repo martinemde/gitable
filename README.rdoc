@@ -1,6 +1,6 @@
 = Gitable
 
-== (({Addressable::URI})) for Git.
+== Addressable::URI for Git.
 
 Works with any valid Git URI, because Addressable doesn't.
 
@@ -24,7 +24,7 @@ Works with any valid Git URI, because Addressable doesn't.
 
 == heuristic_parse
 
-You can use (({Gitable::URI.heuristic_parse})) to take user input.
+You can use Gitable::URI.heuristic_parse to take user input.
 
 Currently this supports the mistake of copying the url bar instead of the git
 uri for a few of the popular git webhosts. It also runs through Addressable's
@@ -33,8 +33,8 @@ heuristic_parse so it will correct some poorly typed URIs.
     uri = Gitable::URI.heuristic_parse('http://github.com:martinemde/gitable')
     uri.to_s   # => 'git://github.com/martinemde/gitable.git'
 
-(({heuristic_parse})) is currently very limited. If the url doesn't end in .git, it
-switches (({http://})) to (({git://})) and adds .git to the basename.
+heuristic_parse is currently very limited. If the url doesn't end in .git, it
+switches http:// to git:// and adds .git to the basename.
 This works fine for github.com and gitorious.org but will happily screw up other URIs.
 
 == That's it?
