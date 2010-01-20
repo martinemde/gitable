@@ -1,6 +1,6 @@
 = Gitable
 
-== +Addressable::URI+ for Git.
+== Addressable::URI for Git.
 
 Works with any valid Git URI, because Addressable doesn't.
 
