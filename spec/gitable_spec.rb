@@ -89,10 +89,17 @@ describe Gitable::URI do
       }.should raise_error(TypeError)
     end
 
-    it "raises an Gitable::URI::InvalidURIError on a bad uri" do
-      lambda {
-        Gitable::URI.parse("http://")
-      }.should raise_error(Gitable::URI::InvalidURIError)
+    context "(bad uris)" do
+      [
+        "http://",
+        "blah:"
+      ].each do |uri|
+        it "raises an Gitable::URI::InvalidURIError with #{uri.inspect}" do
+          lambda {
+            Gitable::URI.parse(uri)
+          }.should raise_error(Gitable::URI::InvalidURIError)
+        end
+      end
     end
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
