@@ -5,46 +5,36 @@ describe Gitable::URI do
     @uri = "ssh://git@github.com/martinemde/gitable.git"
   end
 
-  def self.describe_uri(uri, &block)
-    describe "with uri: #{uri.inspect}" do
-      before { @uri = uri }
-      subject { Gitable::URI.parse(@uri) }
-      URIChecker.new(self, &block)
-    end
-  end
-
-  class URIChecker
-    def initialize(example_group, &block)
-      @example_group = example_group
-      instance_eval(&block)
-    end
-
-    def it_sets(parts)
-      parts.each do |part, value|
-        it "sets #{part} to #{value.inspect}" do
-          subject.send(part).should == value
-        end
-      end
-    end
-
-    def method_missing(*args, &block)
-      @example_group.send(*args, &block)
-    end
-  end
-
   describe_uri "git://github.com/martinemde/gitable" do
-    it "allows a new extname to be set" do
+    it "sets a new extname" do
       subject.extname.should == ""
       subject.extname = "git"
       subject.extname.should == ".git"
       subject.to_s.should == @uri + ".git"
     end
 
-    it "allows a new basename to be set" do
+    it "sets a new basename" do
       subject.basename.should == "gitable"
       subject.basename = "gitable.git"
       subject.basename.should == "gitable.git"
       subject.extname.should == ".git"
+    end
+  end
+
+  describe_uri "git://github.com/" do
+    it "does not set a new extname" do
+      subject.extname.should == ""
+      subject.extname = "git"
+      subject.extname.should == ""
+      subject.to_s.should == @uri
+    end
+
+    it "sets a new basename" do
+      subject.basename.should == ""
+      subject.basename = "gitable.git"
+      subject.basename.should == "gitable.git"
+      subject.extname.should == ".git"
+      subject.to_s.should == @uri + "gitable.git"
     end
   end
 
@@ -421,45 +411,6 @@ describe Gitable::URI do
         :basename     => "gitable.git",
         :project_name => "gitable",
       })
-    end
-  end
-
-  describe ".heuristic_parse" do
-    it "returns a Gitable::URI" do
-      uri = "http://github.com/martinemde/gitable"
-      Gitable::URI.heuristic_parse(uri).should be_a_kind_of(Gitable::URI)
-    end
-
-    [
-      "http://host.xz/path/to/repo.git/",
-      "http://host.xz/path/to/repo.git",
-      "ssh://user@host.xz/path/to/repo.git/",
-      "ssh://user@host.xz:1234/path/to/repo.git/",
-      "user@host.xz:path/to/repo.git",
-      "user@host.xz:path/to/repo.git/",
-      "git@github.com:martinemde/gitable.git",
-    ].each do |uri|
-      it "doesn't break the already valid URI: #{uri.inspect}" do
-        Gitable::URI.heuristic_parse(uri).to_s.should == uri
-      end
-    end
-
-    it "guesses git://github.com/martinemde/gitable.git if I pass in the url bar" do
-      uri = "http://github.com/martinemde/gitable"
-      gitable = Gitable::URI.heuristic_parse(uri)
-      gitable.to_s.should == "git://github.com/martinemde/gitable.git"
-    end
-
-    it "isn't upset by trailing slashes" do
-      uri = "http://github.com/martinemde/gitable/"
-      gitable = Gitable::URI.heuristic_parse(uri)
-      gitable.to_s.should == "git://github.com/martinemde/gitable.git/"
-    end
-
-    it "handles URIs with the name of the project in the path twice" do
-      uri = "http://gitorious.org/project/project"
-      gitable = Gitable::URI.heuristic_parse(uri)
-      gitable.to_s.should == "git://gitorious.org/project/project.git"
     end
   end
 end

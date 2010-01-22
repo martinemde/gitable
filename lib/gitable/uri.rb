@@ -34,7 +34,7 @@ module Gitable
 
     ##
     # Attempts to make a copied url bar into a git repo uri
-    # 
+    #
     # First line of defense is for urls without .git as a basename:
     # * Change the scheme from http:// to git://
     # * Add .git to the basename
@@ -68,7 +68,7 @@ module Gitable
     end
 
     # Set an extension name, replacing one if it exists.
-    # 
+    #
     # If there is no basename (i.e. no words in the path) this method call will
     # be ignored because it is more likely te break the url.
     #
@@ -76,11 +76,23 @@ module Gitable
     # @return [String] extname result
     def extname=(ext)
       base = basename
-      return nil if base.nil?
+      return nil if base.nil? || base == ""
       self.basename = "#{base}.#{ext.sub(/^\.+/,'')}"
       extname
     end
 
+    # Addressable does basename wrong with there's no basename.
+    # It returns "/" for something like "http://host.com/"
+    def basename
+      base = super
+      return "" if base == "/"
+      base
+    end
+
+    # Set the basename, replacing it if it exists.
+    #
+    # @param [String] New basename
+    # @return [String] basename result
     def basename=(new_basename)
       base = basename
       if base.nil? || base == ""
@@ -90,6 +102,7 @@ module Gitable
         # replace the last occurance of the basename with basename.ext
         self.path = rpath.sub(%r|#{Regexp.escape(base.reverse)}|, new_basename.reverse).reverse
       end
+      basename
     end
   end
 end
