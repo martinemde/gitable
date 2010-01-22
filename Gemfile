@@ -10,11 +10,12 @@ end
 only :development do
   gem 'bundler'
   gem 'jeweler'
-  gem 'bundler'
   gem 'rspec', :require_as => 'spec'
   gem 'ZenTest'
   gem 'rake'
   gem 'rcov'
   gem 'ruby-debug'
   gem 'yard'
+  gem 'reek'
+  gem 'roodi'
 end
