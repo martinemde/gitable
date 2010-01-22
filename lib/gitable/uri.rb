@@ -18,11 +18,9 @@ module Gitable
       return uri if uri.nil? || uri.kind_of?(self)
 
       # addressable::URI.parse always returns an instance of Addressable::URI.
-      add = super # >:(
+      add = super # >:( at inconsistency
 
-      scan = uri.scan(SCP_URI_REGEXP)
-      fragments = scan[0]
-      authority = fragments && fragments[0]
+      authority = uri.scan(SCP_URI_REGEXP).flatten.first
 
       if add.host.nil? && authority
         Gitable::ScpURI.new(
@@ -51,15 +49,12 @@ module Gitable
     def self.heuristic_parse(uri)
       return uri if uri.nil? || uri.kind_of?(self)
 
-      add = super
-      return add if add.extname == "git"
-      add.scheme = "git" if add.scheme == "http"
-      unless add.basename.nil?
-        # replace the last occurance of the basename with basename.git
-        # please tell me if there's a better way (besides rindex/slice/insert)
-        rpath = add.path.reverse
-        rbase = add.basename.reverse
-        add.path = rpath.sub(%r|#{Regexp.escape(rbase)}|,"tig."+rbase).reverse
+      # Addressable::URI.heuristic_parse _does_ return the correct type :)
+      add = super # boo inconsistency
+
+      if add.extname != ".git"
+        add.extname = "git"
+        add.scheme = "git" if add.scheme == "http"
       end
       add
     end
@@ -70,6 +65,31 @@ module Gitable
     # @return [String] Project name without .git
     def project_name
       basename.sub(/\.git$/,'')
+    end
+
+    # Set an extension name, replacing one if it exists.
+    # 
+    # If there is no basename (i.e. no words in the path) this method call will
+    # be ignored because it is more likely te break the url.
+    #
+    # @param [String] New extension name
+    # @return [String] extname result
+    def extname=(ext)
+      base = basename
+      return nil if base.nil?
+      self.basename = "#{base}.#{ext.sub(/^\.+/,'')}"
+      extname
+    end
+
+    def basename=(new_basename)
+      base = basename
+      if base.nil? || base == ""
+        self.path += new_basename
+      else
+        rpath = path.reverse
+        # replace the last occurance of the basename with basename.ext
+        self.path = rpath.sub(%r|#{Regexp.escape(base.reverse)}|, new_basename.reverse).reverse
+      end
     end
   end
 end

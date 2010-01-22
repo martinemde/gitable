@@ -32,6 +32,22 @@ describe Gitable::URI do
     end
   end
 
+  describe_uri "git://github.com/martinemde/gitable" do
+    it "allows a new extname to be set" do
+      subject.extname.should == ""
+      subject.extname = "git"
+      subject.extname.should == ".git"
+      subject.to_s.should == @uri + ".git"
+    end
+
+    it "allows a new basename to be set" do
+      subject.basename.should == "gitable"
+      subject.basename = "gitable.git"
+      subject.basename.should == "gitable.git"
+      subject.extname.should == ".git"
+    end
+  end
+
   # Valid Git URIs according to git-clone documentation at this url:
   # http://www.kernel.org/pub/software/scm/git/docs/git-clone.html#_git_urls_a_id_urls_a
   #
@@ -57,17 +73,6 @@ describe Gitable::URI do
   # /path/to/repo.git/
   # file:///path/to/repo.git/
   # 
-  expected = {
-    :user         => nil,
-    :password     => nil,
-    :host         => "host.xz",
-    :port         => nil,
-    :path         => "/path/to/repo.git/",
-    :basename     => "repo.git",
-    :query        => nil,
-    :fragment     => nil,
-    :project_name => "repo"
-  }
 
   describe ".parse" do
     it "returns a Gitable::URI" do
@@ -101,6 +106,18 @@ describe Gitable::URI do
         end
       end
     end
+
+    expected = {
+      :user         => nil,
+      :password     => nil,
+      :host         => "host.xz",
+      :port         => nil,
+      :path         => "/path/to/repo.git/",
+      :basename     => "repo.git",
+      :query        => nil,
+      :fragment     => nil,
+      :project_name => "repo"
+    }
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
@@ -411,6 +428,20 @@ describe Gitable::URI do
     it "returns a Gitable::URI" do
       uri = "http://github.com/martinemde/gitable"
       Gitable::URI.heuristic_parse(uri).should be_a_kind_of(Gitable::URI)
+    end
+
+    [
+      "http://host.xz/path/to/repo.git/",
+      "http://host.xz/path/to/repo.git",
+      "ssh://user@host.xz/path/to/repo.git/",
+      "ssh://user@host.xz:1234/path/to/repo.git/",
+      "user@host.xz:path/to/repo.git",
+      "user@host.xz:path/to/repo.git/",
+      "git@github.com:martinemde/gitable.git",
+    ].each do |uri|
+      it "doesn't break the already valid URI: #{uri.inspect}" do
+        Gitable::URI.heuristic_parse(uri).to_s.should == uri
+      end
     end
 
     it "guesses git://github.com/martinemde/gitable.git if I pass in the url bar" do

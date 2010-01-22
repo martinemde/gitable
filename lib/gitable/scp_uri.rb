@@ -3,7 +3,7 @@ require 'gitable/uri'
 module Gitable
   class ScpURI < Gitable::URI
 
-    # Keep URIs like this relative:
+    # Keep URIs like this as they were input:
     #
     #     git@github.com:martinemde/gitable.git
     #
@@ -18,15 +18,17 @@ module Gitable
       if new_path[0..0] != "/"
         @path = path.sub(%r|^/|,'')
       end
-      path
+      @path
     end
 
     # Get the URI as a string in the same form it was input.
     #
+    # Taken from Addressable::URI.
+    #
     # @return [String] The URI as a string.
     def to_s
       @uri_string ||= begin
-                        uri_string = "#{authority}:#{path.to_s}"
+                        uri_string = "#{authority}:#{path}"
                         if uri_string.respond_to?(:force_encoding)
                           uri_string.force_encoding(Encoding::UTF_8)
                         end
