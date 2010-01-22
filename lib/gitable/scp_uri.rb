@@ -15,9 +15,7 @@ module Gitable
     # @return [String] The same path passed in.
     def path=(new_path)
       super
-      if new_path[0..0] != "/"
-        @path = path.sub(%r|^/|,'')
-      end
+      @path = path.sub(%r|^/|,'') if new_path[0] != ?/
       @path
     end
 
@@ -27,13 +25,14 @@ module Gitable
     #
     # @return [String] The URI as a string.
     def to_s
-      @uri_string ||= begin
-                        uri_string = "#{authority}:#{path}"
-                        if uri_string.respond_to?(:force_encoding)
-                          uri_string.force_encoding(Encoding::UTF_8)
-                        end
-                        uri_string
-                      end
+      @uri_string ||=
+        begin
+          uri_string = "#{authority}:#{path}"
+          if uri_string.respond_to?(:force_encoding)
+            uri_string.force_encoding(Encoding::UTF_8)
+          end
+          uri_string
+        end
     end
   end
 end
