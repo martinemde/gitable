@@ -5,7 +5,7 @@ module Gitable
     SCP_URI_REGEXP = %r|^([^:/?#]+):([^?#]*)$|
 
     ##
-    # Parse a git repository uri into a URI object.
+    # Parse a git repository URI into a URI object.
     #
     # @param [Addressable::URI, #to_str] uri URI of a git repository.
     #
@@ -33,9 +33,9 @@ module Gitable
     end
 
     ##
-    # Attempts to make a copied url bar into a git repo uri
+    # Attempts to make a copied URL bar into a git repository URI.
     #
-    # First line of defense is for urls without .git as a basename:
+    # First line of defense is for URIs without .git as a basename:
     # * Change the scheme from http:// to git://
     # * Add .git to the basename
     #
@@ -70,7 +70,7 @@ module Gitable
     # Set an extension name, replacing one if it exists.
     #
     # If there is no basename (i.e. no words in the path) this method call will
-    # be ignored because it is more likely te break the url.
+    # be ignored because it is likely to break the uri.
     #
     # @param [String] New extension name
     # @return [String] extname result
@@ -99,7 +99,7 @@ module Gitable
         self.path += new_basename
       else
         rpath = path.reverse
-        # replace the last occurance of the basename with basename.ext
+        # replace the last occurrence of the basename with basename.ext
         self.path = rpath.sub(%r|#{Regexp.escape(base.reverse)}|, new_basename.reverse).reverse
       end
       basename
