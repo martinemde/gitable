@@ -1,16 +1,16 @@
-source 'http://gemcutter.org'
- 
-bin_path 'gbin'
-disable_system_gems
+source :gemcutter
 
-only :runtime do
-  gem 'addressable', :require_as => 'addressable/uri'
+group :runtime do
+  gem 'addressable', :require => 'addressable/uri'
 end
- 
-only :development do
+
+group :release do
   gem 'bundler'
   gem 'jeweler'
-  gem 'rspec', :require_as => 'spec'
+end
+ 
+group :development do
+  gem 'rspec', :require => 'spec'
   gem 'ZenTest'
   gem 'rake'
   gem 'rcov'
@@ -18,4 +18,9 @@ only :development do
   gem 'yard'
   gem 'reek'
   gem 'roodi'
+end
+
+group :release do
+  gem 'jeweler'
+  gem 'bundler', '>=0.9.7'
 end

@@ -21,6 +21,8 @@ rdoc
 pkg
 vendor/gems
 .yardoc
+.bundle
+Gemfile.lock
 
 ## PROJECT::SPECIFIC
 gitable.gemspec

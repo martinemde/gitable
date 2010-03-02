@@ -1,6 +1,5 @@
+require 'rubygems'
 require 'bundler'
-Bundler.require_env
-require 'rake'
 
 begin
   require 'jeweler'
@@ -12,11 +11,9 @@ begin
     gem.homepage = "http://github.com/martinemde/gitable"
     gem.authors = ["Martin Emde"]
 
-    bundle = Bundler::Bundle.load(File.dirname(__FILE__) + '/Gemfile')
-    bundle.environment.dependencies.each do |d|
-      if d.only && d.only.include?('runtime')
-        gem.add_dependency d.name, d.version.to_s
-      end
+    bundle = Bundler::Definition.from_gemfile('Gemfile')
+    bundle.dependencies.each do |dep|
+      gem.add_dependency(dep.name, dep.requirement.to_s) if dep.groups.include?(:runtime)
     end
   end
   Jeweler::GemcutterTasks.new
@@ -36,8 +33,6 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.rcov = true
   spec.rcov_opts << '--exclude' << 'spec,vendor,Library'
 end
-
-task :spec => :check_dependencies
 
 begin
   require 'reek/adapters/rake_task'
