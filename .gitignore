@@ -25,4 +25,3 @@ vendor/gems
 Gemfile.lock
 
 ## PROJECT::SPECIFIC
-gitable.gemspec
