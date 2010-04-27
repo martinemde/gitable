@@ -34,5 +34,25 @@ module Gitable
           uri_string
         end
     end
+
+    protected
+
+    def validate
+      return if !!@validation_deferred
+      if scheme != nil &&
+          (host == nil || host == "") &&
+          (path == nil || path == "")
+        raise InvalidURIError,
+          "Absolute URI missing hierarchical segment: '#{to_s}'"
+      end
+      if host == nil
+        if port != nil ||
+            user != nil ||
+            password != nil
+          raise InvalidURIError, "Hostname not supplied: '#{to_s}'"
+        end
+      end
+      return nil
+    end
   end
 end
