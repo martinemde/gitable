@@ -15,7 +15,7 @@ module Gitable
     # @return [String] The same path passed in.
     def path=(new_path)
       super
-      @path = path.sub(%r|^/|,'') if new_path[0] != ?/
+      @path = path.sub(%r|^/|,'') if new_path[0] != ?/ # addressable likes to add a /
       @path
     end
 
