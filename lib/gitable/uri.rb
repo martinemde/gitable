@@ -67,6 +67,10 @@ module Gitable
       basename.sub(/\.git$/,'')
     end
 
+    def local?
+      scheme == 'file' || (scheme.nil? && host.nil?)
+    end
+
     # Set an extension name, replacing one if it exists.
     #
     # If there is no basename (i.e. no words in the path) this method call will

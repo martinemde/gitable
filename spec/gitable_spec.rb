@@ -108,7 +108,8 @@ describe Gitable::URI do
       :basename     => "repo.git",
       :query        => nil,
       :fragment     => nil,
-      :project_name => "repo"
+      :project_name => "repo",
+      :local?       => false,
     }
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
@@ -346,6 +347,7 @@ describe Gitable::URI do
         :scheme   => nil,
         :host     => nil,
         :path     => "/path/to/repo.git/",
+        :local?   => true,
       })
     end
 
@@ -355,6 +357,7 @@ describe Gitable::URI do
         :scheme   => "file",
         :host     => "", # I don't really like this but it doesn't hurt anything.
         :path     => "/path/to/repo.git/",
+        :local?   => true,
       })
     end
 
