@@ -88,7 +88,8 @@ describe Gitable::URI do
     context "(bad uris)" do
       [
         "http://",
-        "blah:"
+        "blah:",
+        "git://user@are.not/allowed/on/normal/uris.git" # if I'm reading the docs correctly
       ].each do |uri|
         it "raises an Gitable::URI::InvalidURIError with #{uri.inspect}" do
           lambda {

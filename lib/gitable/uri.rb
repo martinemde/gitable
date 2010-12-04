@@ -103,5 +103,16 @@ module Gitable
       end
       basename
     end
+
+    protected
+
+    def validate
+      return if @validation_deferred
+      super
+
+      if user && scheme != 'ssh'
+        raise InvalidURIError, "Git does not support URIs with 'user@' other than ssh:// and scp-style"
+      end
+    end
   end
 end
