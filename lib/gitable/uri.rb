@@ -81,12 +81,11 @@ module Gitable
       extname
     end
 
-    # Addressable does basename wrong with there's no basename.
+    # Addressable does basename wrong when there's no basename.
     # It returns "/" for something like "http://host.com/"
     def basename
       base = super
-      return "" if base == "/"
-      base
+      base == "/" ? "" : base
     end
 
     # Set the basename, replacing it if it exists.

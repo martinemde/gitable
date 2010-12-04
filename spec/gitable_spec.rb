@@ -41,28 +41,29 @@ describe Gitable::URI do
   # Valid Git URIs according to git-clone documentation at this url:
   # http://www.kernel.org/pub/software/scm/git/docs/git-clone.html#_git_urls_a_id_urls_a
   #
-  # rsync://host.xz/path/to/repo.git/
-  # http://host.xz[:port]/path/to/repo.git/
-  # https://host.xz[:port]/path/to/repo.git/
-  # git://host.xz[:port]/path/to/repo.git/
-  # git://host.xz[:port]/~user/path/to/repo.git/
+  # Git natively supports ssh, git, http, https, ftp, ftps, and rsync protocols. The following syntaxes may be used with them:
+  #
   # ssh://[user@]host.xz[:port]/path/to/repo.git/
-  # ssh://[user@]host.xz/path/to/repo.git/
-  # ssh://[user@]host.xz/~user/path/to/repo.git/
-  # ssh://[user@]host.xz/~/path/to/repo.git
+  # git://host.xz[:port]/path/to/repo.git/
+  # http[s]://host.xz[:port]/path/to/repo.git/
+  # ftp[s]://host.xz[:port]/path/to/repo.git/
+  # rsync://host.xz/path/to/repo.git/
   #
-  # (from the git docs)
-  # SSH is the default transport protocol over the network. You can optionally specify which user to log-in as, and an alternate, scp-like syntax is also supported. Both syntaxes support username expansion, as does the native git protocol, but only the former supports port specification. The following three are identical to the last three above, respectively:
+  # An alternative scp-like syntax may also be used with the ssh protocol:
   #
-  # [user@]host.xz:/path/to/repo.git/
-  # [user@]host.xz:~user/path/to/repo.git/
-  # [user@]host.xz:path/to/repo.git
+  # [user@]host.xz:path/to/repo.git/
   #
-  # To sync with a local directory, you can use:
+  # The ssh and git protocols additionally support ~username expansion:
+  #
+  # ssh://[user@]host.xz[:port]/~[user]/path/to/repo.git/
+  # git://host.xz[:port]/~[user]/path/to/repo.git/
+  # [user@]host.xz:/~[user]/path/to/repo.git/
+  #
+  # For local repositories, also supported by git natively, the following syntaxes may be used:
   #
   # /path/to/repo.git/
   # file:///path/to/repo.git/
-  # 
+  #
 
   describe ".parse" do
     it "returns a Gitable::URI" do

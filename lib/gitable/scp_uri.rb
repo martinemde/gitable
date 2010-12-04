@@ -38,21 +38,21 @@ module Gitable
     protected
 
     def validate
-      return if !!@validation_deferred
-      if scheme != nil &&
-          (host == nil || host == "") &&
-          (path == nil || path == "")
-        raise InvalidURIError,
-          "Absolute URI missing hierarchical segment: '#{to_s}'"
+      return if @validation_deferred
+
+      if !scheme.to_s.empty? && host.to_s.empty? && path.to_s.empty?
+        raise InvalidURIError, "Absolute URI missing hierarchical segment: '#{to_s}'"
       end
-      if host == nil
-        if port != nil ||
-            user != nil ||
-            password != nil
-          raise InvalidURIError, "Hostname not supplied: '#{to_s}'"
-        end
+
+      if host.nil? && !path_only?
+        raise InvalidURIError, "Hostname not supplied: '#{to_s}'"
       end
-      return nil
+
+      nil
+    end
+
+    def path_only?
+      host.nil? && port.nil? && user.nil? && password.nil?
     end
   end
 end
