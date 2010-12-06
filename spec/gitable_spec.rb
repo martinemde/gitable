@@ -89,7 +89,6 @@ describe Gitable::URI do
       [
         "http://",
         "blah:",
-        "git://user@are.not/allowed/on/normal/uris.git" # if I'm reading the docs correctly
       ].each do |uri|
         it "raises an Gitable::URI::InvalidURIError with #{uri.inspect}" do
           lambda {
@@ -111,6 +110,7 @@ describe Gitable::URI do
       :project_name   => "repo",
       :local?         => false,
       :ssh?           => false,
+      :authenticated? => false,
     }
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
@@ -156,6 +156,15 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
         :scheme   => "https",
+      })
+    end
+
+    describe_uri "https://user@host.xz/path/to/repo.git/" do
+      it { subject.to_s.should == @uri }
+      it_sets expected.merge({
+        :user           => "user",
+        :scheme         => "https",
+        :authenticated? => true,
       })
     end
 
@@ -212,6 +221,7 @@ describe Gitable::URI do
       it_sets expected.merge({
         :scheme         => "ssh",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -221,6 +231,7 @@ describe Gitable::URI do
         :scheme         => "ssh",
         :user           => "user",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -229,6 +240,7 @@ describe Gitable::URI do
       it_sets expected.merge({
         :scheme         => "ssh",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -238,6 +250,7 @@ describe Gitable::URI do
         :scheme         => "ssh",
         :port           => 8888,
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -247,6 +260,7 @@ describe Gitable::URI do
         :user           => "user",
         :scheme         => "ssh",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -257,6 +271,7 @@ describe Gitable::URI do
         :user           => "user",
         :port           => 8888,
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -267,6 +282,7 @@ describe Gitable::URI do
         :user           => nil,
         :path           => "/~user/path/to/repo.git/",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -277,6 +293,7 @@ describe Gitable::URI do
         :user           => "user",
         :path           => "/~user/path/to/repo.git/",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -286,6 +303,7 @@ describe Gitable::URI do
         :scheme         => "ssh",
         :path           => "/~/path/to/repo.git",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -296,6 +314,7 @@ describe Gitable::URI do
         :user           => "user",
         :path           => "/~/path/to/repo.git",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -307,6 +326,7 @@ describe Gitable::URI do
         :user              => nil,
         :path              => "/path/to/repo.git/",
         :ssh?              => true,
+        :authenticated?    => true,
       })
     end
 
@@ -318,6 +338,7 @@ describe Gitable::URI do
         :user              => "user",
         :path              => "/path/to/repo.git/",
         :ssh?              => true,
+        :authenticated?    => true,
       })
     end
 
@@ -329,6 +350,7 @@ describe Gitable::URI do
         :user              => nil,
         :path              => "~user/path/to/repo.git/",
         :ssh?              => true,
+        :authenticated?    => true,
       })
     end
 
@@ -340,6 +362,7 @@ describe Gitable::URI do
         :user              => "user",
         :path              => "~user/path/to/repo.git/",
         :ssh?              => true,
+        :authenticated?    => true,
       })
     end
 
@@ -351,6 +374,7 @@ describe Gitable::URI do
         :user              => nil,
         :path              => "path/to/repo.git",
         :ssh?              => true,
+        :authenticated?    => true,
       })
     end
 
@@ -362,6 +386,7 @@ describe Gitable::URI do
         :user              => "user",
         :path              => "path/to/repo.git",
         :ssh?              => true,
+        :authenticated?    => true,
       })
     end
 
@@ -397,6 +422,7 @@ describe Gitable::URI do
         :fragment       => nil,
         :basename       => "gitable.git",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 
@@ -442,6 +468,7 @@ describe Gitable::URI do
         :basename          => "gitable.git",
         :project_name      => "gitable",
         :ssh?              => true,
+        :authenticated?    => true,
       })
     end
   end

@@ -80,6 +80,10 @@ module Gitable
       !!(normalized_scheme =~ /ssh/)
     end
 
+    def authenticated?
+      ssh? || (user && password.nil?)
+    end
+
     # Set an extension name, replacing one if it exists.
     #
     # If there is no basename (i.e. no words in the path) this method call will
