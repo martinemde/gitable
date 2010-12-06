@@ -59,7 +59,6 @@ module Gitable
       add
     end
 
-    ##
     # Tries to guess the project name of the repository.
     #
     # @return [String] Project name without .git
@@ -67,8 +66,18 @@ module Gitable
       basename.sub(/\.git$/,'')
     end
 
+    # Detect local filesystem URIs.
+    #
+    # @return [Boolean] Is the URI local
     def local?
-      scheme == 'file' || (scheme.nil? && host.nil?)
+      scheme == 'file' || host.nil?
+    end
+
+    # Detect URIs that connect over ssh
+    #
+    # @return [Boolean] true if the URI uses ssh?
+    def ssh?
+      !!(normalized_scheme =~ /ssh/)
     end
 
     # Set an extension name, replacing one if it exists.

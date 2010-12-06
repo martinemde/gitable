@@ -100,16 +100,17 @@ describe Gitable::URI do
     end
 
     expected = {
-      :user         => nil,
-      :password     => nil,
-      :host         => "host.xz",
-      :port         => nil,
-      :path         => "/path/to/repo.git/",
-      :basename     => "repo.git",
-      :query        => nil,
-      :fragment     => nil,
-      :project_name => "repo",
-      :local?       => false,
+      :user           => nil,
+      :password       => nil,
+      :host           => "host.xz",
+      :port           => nil,
+      :path           => "/path/to/repo.git/",
+      :basename       => "repo.git",
+      :query          => nil,
+      :fragment       => nil,
+      :project_name   => "repo",
+      :local?         => false,
+      :ssh?           => false,
     }
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
@@ -169,7 +170,8 @@ describe Gitable::URI do
     describe_uri "git+ssh://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "git+ssh",
+        :scheme         => "git+ssh",
+        :ssh?           => true,
       })
     end
 
@@ -208,136 +210,158 @@ describe Gitable::URI do
     describe_uri "ssh://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
+        :scheme         => "ssh",
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://user@host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
-        :user     => "user",
+        :scheme         => "ssh",
+        :user           => "user",
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
+        :scheme         => "ssh",
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
-        :port     => 8888,
+        :scheme         => "ssh",
+        :port           => 8888,
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://user@host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :user     => "user",
-        :scheme   => "ssh",
+        :user           => "user",
+        :scheme         => "ssh",
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://user@host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
-        :user     => "user",
-        :port     => 8888,
+        :scheme         => "ssh",
+        :user           => "user",
+        :port           => 8888,
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://host.xz/~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
-        :user     => nil,
-        :path     => "/~user/path/to/repo.git/",
+        :scheme         => "ssh",
+        :user           => nil,
+        :path           => "/~user/path/to/repo.git/",
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://user@host.xz/~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
-        :user     => "user",
-        :path     => "/~user/path/to/repo.git/",
+        :scheme         => "ssh",
+        :user           => "user",
+        :path           => "/~user/path/to/repo.git/",
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://host.xz/~/path/to/repo.git" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
-        :path     => "/~/path/to/repo.git",
+        :scheme         => "ssh",
+        :path           => "/~/path/to/repo.git",
+        :ssh?           => true,
       })
     end
 
     describe_uri "ssh://user@host.xz/~/path/to/repo.git" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "ssh",
-        :user     => "user",
-        :path     => "/~/path/to/repo.git",
+        :scheme         => "ssh",
+        :user           => "user",
+        :path           => "/~/path/to/repo.git",
+        :ssh?           => true,
       })
     end
 
     describe_uri "host.xz:/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => nil,
-        :user     => nil,
-        :path     => "/path/to/repo.git/",
+        :scheme            => nil,
+        :normalized_scheme => 'ssh',
+        :user              => nil,
+        :path              => "/path/to/repo.git/",
+        :ssh?              => true,
       })
     end
 
     describe_uri "user@host.xz:/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => nil,
-        :user     => "user",
-        :path     => "/path/to/repo.git/",
+        :scheme            => nil,
+        :normalized_scheme => 'ssh',
+        :user              => "user",
+        :path              => "/path/to/repo.git/",
+        :ssh?              => true,
       })
     end
 
     describe_uri "host.xz:~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => nil,
-        :user     => nil,
-        :path     => "~user/path/to/repo.git/",
+        :scheme            => nil,
+        :normalized_scheme => 'ssh',
+        :user              => nil,
+        :path              => "~user/path/to/repo.git/",
+        :ssh?              => true,
       })
     end
 
     describe_uri "user@host.xz:~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => nil,
-        :user     => "user",
-        :path     => "~user/path/to/repo.git/",
+        :scheme            => nil,
+        :normalized_scheme => 'ssh',
+        :user              => "user",
+        :path              => "~user/path/to/repo.git/",
+        :ssh?              => true,
       })
     end
 
     describe_uri "host.xz:path/to/repo.git" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => nil,
-        :user     => nil,
-        :path     => "path/to/repo.git",
+        :scheme            => nil,
+        :normalized_scheme => 'ssh',
+        :user              => nil,
+        :path              => "path/to/repo.git",
+        :ssh?              => true,
       })
     end
 
     describe_uri "user@host.xz:path/to/repo.git" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => nil,
-        :user     => "user",
-        :path     => "path/to/repo.git",
+        :scheme            => nil,
+        :normalized_scheme => 'ssh',
+        :user              => "user",
+        :path              => "path/to/repo.git",
+        :ssh?              => true,
       })
     end
 
@@ -364,14 +388,15 @@ describe Gitable::URI do
     describe_uri "ssh://git@github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
       it_sets({
-        :scheme   => "ssh",
-        :user     => "git",
-        :password => nil,
-        :host     => "github.com",
-        :port     => nil,
-        :path     => "/martinemde/gitable.git",
-        :fragment => nil,
-        :basename => "gitable.git",
+        :scheme         => "ssh",
+        :user           => "git",
+        :password       => nil,
+        :host           => "github.com",
+        :port           => nil,
+        :path           => "/martinemde/gitable.git",
+        :fragment       => nil,
+        :basename       => "gitable.git",
+        :ssh?           => true,
       })
     end
 
@@ -406,15 +431,17 @@ describe Gitable::URI do
     describe_uri "git@github.com:martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
       it_sets({
-        :scheme       => nil,
-        :user         => "git",
-        :password     => nil,
-        :host         => "github.com",
-        :port         => nil,
-        :path         => "martinemde/gitable.git",
-        :fragment     => nil,
-        :basename     => "gitable.git",
-        :project_name => "gitable",
+        :scheme            => nil,
+        :normalized_scheme => 'ssh',
+        :user              => "git",
+        :password          => nil,
+        :host              => "github.com",
+        :port              => nil,
+        :path              => "martinemde/gitable.git",
+        :fragment          => nil,
+        :basename          => "gitable.git",
+        :project_name      => "gitable",
+        :ssh?              => true,
       })
     end
   end
