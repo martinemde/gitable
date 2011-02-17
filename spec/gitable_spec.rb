@@ -159,15 +159,6 @@ describe Gitable::URI do
       })
     end
 
-    describe_uri "https://user@host.xz/path/to/repo.git/" do
-      it { subject.to_s.should == @uri }
-      it_sets expected.merge({
-        :user           => "user",
-        :scheme         => "https",
-        :authenticated? => true,
-      })
-    end
-
     describe_uri "https://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
@@ -181,6 +172,7 @@ describe Gitable::URI do
       it_sets expected.merge({
         :scheme         => "git+ssh",
         :ssh?           => true,
+        :authenticated? => true,
       })
     end
 

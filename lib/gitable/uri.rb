@@ -2,7 +2,7 @@ require 'addressable/uri'
 
 module Gitable
   class URI < Addressable::URI
-    SCP_URI_REGEXP = %r|^([^:/?#]+):([^?#]*)$|
+    SCP_URI_REGEXP = %r|^([^:/?#]+):([^:?#]*)$|
 
     ##
     # Parse a git repository URI into a URI object.
@@ -81,7 +81,7 @@ module Gitable
     end
 
     def authenticated?
-      ssh? || (user && password.nil?)
+      ssh? || (!user.nil? && password.nil?)
     end
 
     # Set an extension name, replacing one if it exists.
