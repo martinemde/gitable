@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 Gem::Specification.new do |s|
   s.name        = "gitable"
-  s.version     = "0.1.2"
+  s.version     = "0.1.3"
   s.authors     = ["Martin Emde"]
   s.email       = ["martin.emde@gmail.com"]
   s.homepage    = "http://github.org/martinemde/gitable"
