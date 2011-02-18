@@ -61,15 +61,11 @@ module Gitable
         raise InvalidURIError, "Absolute URI missing hierarchical segment: '#{to_s}'"
       end
 
-      if normalized_host.nil? && !path_only?
-        raise InvalidURIError, "Hostname not supplied: '#{to_s}'"
+      if normalized_host.to_s.empty?
+        raise InvalidURIError, "Hostname segment missing: '#{to_s}'"
       end
 
       nil
-    end
-
-    def path_only?
-      normalized_host.nil? && normalized_port.nil? && normalized_user.nil? && normalized_password.nil?
     end
   end
 end

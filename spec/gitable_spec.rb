@@ -94,8 +94,11 @@ describe Gitable::URI do
 
     context "(bad uris)" do
       [
-        "http://",
-        "blah:",
+        "http://", # nothing but scheme
+        "blah:", # pretty much nothing
+        "http://user@example.com/path.git", # unsupported http with user part
+        "user@:path.git", # no host
+        "user@host:", # no path
       ].each do |uri|
         it "raises an Gitable::URI::InvalidURIError with #{uri.inspect}" do
           lambda {
