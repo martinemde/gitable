@@ -22,10 +22,10 @@ module Gitable
 
       authority = uri.scan(SCP_URI_REGEXP).flatten.first
 
-      if add.host.nil? && authority
+      if add.normalized_host.nil? && authority
         Gitable::ScpURI.new(
           :authority  => authority,
-          :path       => add.path
+          :path       => add.normalized_path
         )
       else
         new(add.omit(:password,:query,:fragment).to_hash)
@@ -50,20 +50,19 @@ module Gitable
       return uri if uri.nil? || uri.kind_of?(self)
 
       # Addressable::URI.heuristic_parse _does_ return the correct type :)
-      add = super # boo inconsistency
+      gitable = super # boo inconsistency
 
-      if add.extname != ".git"
-        add.extname = "git"
-        add.scheme = "git" if add.scheme == "http"
+      if gitable.github?
+        gitable.extname = "git"
       end
-      add
+      gitable
     end
 
     # Is this uri a github uri?
     #
     # @return [Boolean] github.com is the host?
     def github?
-      !!host.match(/\.?github.com$/)
+      !!normalized_host.to_s.match(/\.?github.com$/)
     end
 
     # Create a web uri for repositories that follow the github pattern.
@@ -73,8 +72,8 @@ module Gitable
     # @param [String] Scheme of the web uri (smart defaults)
     # @return [Addressable::URI] https://#{host}/#{path_without_git_extension}
     def to_web_uri(uri_scheme='https')
-      return nil if host.nil? || host.empty?
-      Addressable::URI.new(:scheme => uri_scheme, :host => host, :port => port, :path => path.sub(%r#\.git/?#, ''))
+      return nil if normalized_host.to_s.empty?
+      Addressable::URI.new(:scheme => uri_scheme, :host => normalized_host, :port => normalized_port, :path => normalized_path.sub(%r#\.git/?#, ''))
     end
 
     # Tries to guess the project name of the repository.
@@ -88,18 +87,32 @@ module Gitable
     #
     # @return [Boolean] Is the URI local
     def local?
-      scheme == 'file' || host.nil?
+      inferred_scheme == 'file'
+    end
+
+    # Scheme inferred by the URI (URIs without hosts or schemes are assumed to be 'file')
+    #
+    # @return [Boolean] Is the URI local
+    def inferred_scheme
+      if normalized_scheme == 'file' || (normalized_scheme.to_s.empty? && normalized_host.to_s.empty?)
+        'file'
+      else
+        normalized_scheme
+      end
     end
 
     # Detect URIs that connect over ssh
     #
     # @return [Boolean] true if the URI uses ssh?
     def ssh?
-      !!(normalized_scheme =~ /ssh/)
+      !!normalized_scheme.to_s.match(/ssh/)
     end
 
+    # Detect URIs that will require some sort of authentication
+    #
+    # @return [Boolean] true if the URI uses ssh or has a user but no password
     def authenticated?
-      ssh? || (!user.nil? && password.nil?)
+      ssh? || (!normalized_user.nil? && normalized_password.nil?)
     end
 
     # Set an extension name, replacing one if it exists.
@@ -107,20 +120,30 @@ module Gitable
     # If there is no basename (i.e. no words in the path) this method call will
     # be ignored because it is likely to break the uri.
     #
+    # Use the public method #set_git_extname unless you actually need some other ext
+    #
     # @param [String] New extension name
     # @return [String] extname result
-    def extname=(ext)
-      base = basename
-      return nil if base.nil? || base == ""
-      self.basename = "#{base}.#{ext.sub(/^\.+/,'')}"
+    def extname=(new_ext)
+      return nil if basename.to_s.empty?
+      self.basename = "#{basename.sub(%r#\.git/?$#, '')}.#{new_ext.sub(/^\.+/,'')}"
       extname
+    end
+
+    # Set the '.git' extension name, replacing one if it exists.
+    #
+    # If there is no basename (i.e. no words in the path) this method call will
+    # be ignored because it is likely to break the uri.
+    #
+    # @return [String] extname result
+    def set_git_extname
+      self.extname = "git"
     end
 
     # Addressable does basename wrong when there's no basename.
     # It returns "/" for something like "http://host.com/"
     def basename
-      base = super
-      base == "/" ? "" : base
+      super == "/" ? "" : super
     end
 
     # Set the basename, replacing it if it exists.
@@ -129,10 +152,10 @@ module Gitable
     # @return [String] basename result
     def basename=(new_basename)
       base = basename
-      if base.nil? || base == ""
+      if base.to_s.empty?
         self.path += new_basename
       else
-        rpath = path.reverse
+        rpath = normalized_path.reverse
         # replace the last occurrence of the basename with basename.ext
         self.path = rpath.sub(%r|#{Regexp.escape(base.reverse)}|, new_basename.reverse).reverse
       end
@@ -145,8 +168,8 @@ module Gitable
       return if @validation_deferred
       super
 
-      if user && scheme != 'ssh'
-        raise InvalidURIError, "Git does not support URIs with 'user@' other than ssh:// and scp-style"
+      if normalized_user && normalized_scheme != 'ssh'
+        raise InvalidURIError, "URIs with 'user@' other than ssh:// and scp-style are not supported."
       end
     end
   end

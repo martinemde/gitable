@@ -6,10 +6,17 @@ describe Gitable::URI do
   end
 
   describe_uri "git://github.com/martinemde/gitable" do
-    it "sets a new extname" do
+    it "sets the .git extname" do
       subject.extname.should == ""
-      subject.extname = "git"
+      subject.set_git_extname
       subject.extname.should == ".git"
+      subject.to_s.should == @uri + ".git"
+    end
+
+    it "does not duplicate the extname" do
+      subject.extname = "git"
+      subject.to_s.should == @uri + ".git"
+      subject.set_git_extname
       subject.to_s.should == @uri + ".git"
     end
 
@@ -24,7 +31,7 @@ describe Gitable::URI do
   describe_uri "git://github.com/" do
     it "does not set a new extname" do
       subject.extname.should == ""
-      subject.extname = "git"
+      subject.set_git_extname
       subject.extname.should == ""
       subject.to_s.should == @uri
     end
@@ -327,7 +334,7 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
-        :normalized_scheme => 'ssh',
+        :inferred_scheme   => 'ssh',
         :user              => nil,
         :path              => "/path/to/repo.git/",
         :ssh?              => true,
@@ -339,7 +346,7 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
-        :normalized_scheme => 'ssh',
+        :inferred_scheme   => 'ssh',
         :user              => "user",
         :path              => "/path/to/repo.git/",
         :ssh?              => true,
@@ -351,7 +358,7 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
-        :normalized_scheme => 'ssh',
+        :inferred_scheme   => 'ssh',
         :user              => nil,
         :path              => "~user/path/to/repo.git/",
         :ssh?              => true,
@@ -364,7 +371,7 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
-        :normalized_scheme => 'ssh',
+        :inferred_scheme   => 'ssh',
         :user              => "user",
         :path              => "~user/path/to/repo.git/",
         :ssh?              => true,
@@ -377,7 +384,7 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
-        :normalized_scheme => 'ssh',
+        :inferred_scheme   => 'ssh',
         :user              => nil,
         :path              => "path/to/repo.git",
         :ssh?              => true,
@@ -389,7 +396,7 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
-        :normalized_scheme => 'ssh',
+        :inferred_scheme   => "ssh",
         :user              => "user",
         :path              => "path/to/repo.git",
         :ssh?              => true,
@@ -400,22 +407,24 @@ describe Gitable::URI do
     describe_uri "/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme     => nil,
-        :host       => nil,
-        :path       => "/path/to/repo.git/",
-        :local?     => true,
-        :to_web_uri => nil,
+        :scheme          => nil,
+        :inferred_scheme => "file",
+        :host            => nil,
+        :path            => "/path/to/repo.git/",
+        :local?          => true,
+        :to_web_uri      => nil,
       })
     end
 
     describe_uri "file:///path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme     => "file",
-        :host       => "", # I don't really like this but it doesn't hurt anything.
-        :path       => "/path/to/repo.git/",
-        :local?     => true,
-        :to_web_uri => nil,
+        :scheme          => "file",
+        :inferred_scheme => "file",
+        :host            => "",
+        :path            => "/path/to/repo.git/",
+        :local?          => true,
+        :to_web_uri      => nil,
       })
     end
 
@@ -473,7 +482,7 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets({
         :scheme            => nil,
-        :normalized_scheme => 'ssh',
+        :inferred_scheme   => 'ssh',
         :user              => "git",
         :password          => nil,
         :host              => "github.com",

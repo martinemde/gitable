@@ -15,7 +15,10 @@ module Gitable
     # @return [String] The same path passed in.
     def path=(new_path)
       super
-      @path = path.sub(%r|^/|,'') if new_path[0] != ?/ # addressable likes to add a /
+      if new_path[0] != ?/ # addressable likes to add a / but scp-style uris are altered by this behaviour
+        @path = path.sub(%r|^/|,'')
+        @normalized_path = normalized_path.sub(%r|^/|,'')
+      end
       @path
     end
 
@@ -27,7 +30,7 @@ module Gitable
     def to_s
       @uri_string ||=
         begin
-          uri_string = "#{authority}:#{path}"
+          uri_string = "#{normalized_authority}:#{normalized_path}"
           if uri_string.respond_to?(:force_encoding)
             uri_string.force_encoding(Encoding::UTF_8)
           end
@@ -38,8 +41,15 @@ module Gitable
     # Return the actual scheme even though we don't show it
     #
     # @return [String] always 'ssh' for scp style URIs
-    def normalized_scheme
+    def inferred_scheme
       'ssh'
+    end
+
+    # Scp style URIs are always ssh
+    #
+    # @return [true] always ssh
+    def ssh?
+      true
     end
 
     protected
@@ -47,11 +57,11 @@ module Gitable
     def validate
       return if @validation_deferred
 
-      if !scheme.to_s.empty? && host.to_s.empty? && path.to_s.empty?
+      if !normalized_scheme.to_s.empty? && normalized_host.to_s.empty? && normalized_path.to_s.empty?
         raise InvalidURIError, "Absolute URI missing hierarchical segment: '#{to_s}'"
       end
 
-      if host.nil? && !path_only?
+      if normalized_host.nil? && !path_only?
         raise InvalidURIError, "Hostname not supplied: '#{to_s}'"
       end
 
@@ -59,7 +69,7 @@ module Gitable
     end
 
     def path_only?
-      host.nil? && port.nil? && user.nil? && password.nil?
+      normalized_host.nil? && normalized_port.nil? && normalized_user.nil? && normalized_password.nil?
     end
   end
 end

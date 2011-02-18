@@ -20,21 +20,15 @@ describe Gitable::URI, ".heuristic_parse" do
     end
   end
 
-  it "guesses git://github.com/martinemde/gitable.git if I pass in the url bar" do
-    uri = "http://github.com/martinemde/gitable"
+  it "guesses https://github.com/martinemde/gitable.git if I pass in the url bar" do
+    uri = "https://github.com/martinemde/gitable"
     gitable = Gitable::URI.heuristic_parse(uri)
-    gitable.to_s.should == "git://github.com/martinemde/gitable.git"
+    gitable.to_s.should == "https://github.com/martinemde/gitable.git"
   end
 
   it "isn't upset by trailing slashes" do
-    uri = "http://github.com/martinemde/gitable/"
+    uri = "https://github.com/martinemde/gitable/"
     gitable = Gitable::URI.heuristic_parse(uri)
-    gitable.to_s.should == "git://github.com/martinemde/gitable.git/"
-  end
-
-  it "handles URIs with the name of the project in the path twice" do
-    uri = "http://gitorious.org/project/project"
-    gitable = Gitable::URI.heuristic_parse(uri)
-    gitable.to_s.should == "git://gitorious.org/project/project.git"
+    gitable.to_s.should == "https://github.com/martinemde/gitable.git/"
   end
 end
