@@ -59,6 +59,24 @@ module Gitable
       add
     end
 
+    # Is this uri a github uri?
+    #
+    # @return [Boolean] github.com is the host?
+    def github?
+      !!host.match(/\.?github.com$/)
+    end
+
+    # Create a web uri for repositories that follow the github pattern.
+    # This probably won't work for all git hosts, so it's a good idea to use
+    # this in conjunction with #github? to help ensure correct links.
+    #
+    # @param [String] Scheme of the web uri (smart defaults)
+    # @return [Addressable::URI] https://#{host}/#{path_without_git_extension}
+    def to_web_uri(uri_scheme='https')
+      return nil if host.nil? || host.empty?
+      Addressable::URI.new(:scheme => uri_scheme, :host => host, :port => port, :path => path.sub(%r#\.git/?#, ''))
+    end
+
     # Tries to guess the project name of the repository.
     #
     # @return [String] Project name without .git

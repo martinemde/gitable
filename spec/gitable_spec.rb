@@ -111,6 +111,7 @@ describe Gitable::URI do
       :local?         => false,
       :ssh?           => false,
       :authenticated? => false,
+      :to_web_uri     => Addressable::URI.parse("https://host.xz/path/to/repo"),
     }
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
@@ -138,17 +139,19 @@ describe Gitable::URI do
     describe_uri "http://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "http",
-        :port     => 8888,
+        :scheme         => "http",
+        :port           => 8888,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
     describe_uri "http://12.34.56.78:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "http",
-        :host     => "12.34.56.78",
-        :port     => 8888,
+        :scheme         => "http",
+        :host           => "12.34.56.78",
+        :port           => 8888,
+        :to_web_uri     => Addressable::URI.parse("https://12.34.56.78:8888/path/to/repo")
       })
     end
 
@@ -162,8 +165,9 @@ describe Gitable::URI do
     describe_uri "https://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "https",
-        :port     => 8888,
+        :scheme         => "https",
+        :port           => 8888,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
@@ -186,25 +190,28 @@ describe Gitable::URI do
     describe_uri "git://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "git",
-        :port     => 8888,
+        :scheme         => "git",
+        :port           => 8888,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
     describe_uri "git://host.xz/~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "git",
-        :path     => "/~user/path/to/repo.git/",
+        :scheme         => "git",
+        :path           => "/~user/path/to/repo.git/",
+        :to_web_uri     => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
     describe_uri "git://host.xz:8888/~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "git",
-        :path     => "/~user/path/to/repo.git/",
-        :port     => 8888,
+        :scheme         => "git",
+        :path           => "/~user/path/to/repo.git/",
+        :port           => 8888,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/~user/path/to/repo")
       })
     end
 
@@ -243,6 +250,7 @@ describe Gitable::URI do
         :port           => 8888,
         :ssh?           => true,
         :authenticated? => true,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
@@ -264,6 +272,7 @@ describe Gitable::URI do
         :port           => 8888,
         :ssh?           => true,
         :authenticated? => true,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
@@ -275,6 +284,7 @@ describe Gitable::URI do
         :path           => "/~user/path/to/repo.git/",
         :ssh?           => true,
         :authenticated? => true,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
@@ -286,6 +296,7 @@ describe Gitable::URI do
         :path           => "/~user/path/to/repo.git/",
         :ssh?           => true,
         :authenticated? => true,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
@@ -296,6 +307,7 @@ describe Gitable::URI do
         :path           => "/~/path/to/repo.git",
         :ssh?           => true,
         :authenticated? => true,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz/~/path/to/repo")
       })
     end
 
@@ -307,6 +319,7 @@ describe Gitable::URI do
         :path           => "/~/path/to/repo.git",
         :ssh?           => true,
         :authenticated? => true,
+        :to_web_uri     => Addressable::URI.parse("https://host.xz/~/path/to/repo")
       })
     end
 
@@ -343,6 +356,7 @@ describe Gitable::URI do
         :path              => "~user/path/to/repo.git/",
         :ssh?              => true,
         :authenticated?    => true,
+        :to_web_uri        => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
@@ -355,6 +369,7 @@ describe Gitable::URI do
         :path              => "~user/path/to/repo.git/",
         :ssh?              => true,
         :authenticated?    => true,
+        :to_web_uri        => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
@@ -385,64 +400,72 @@ describe Gitable::URI do
     describe_uri "/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => nil,
-        :host     => nil,
-        :path     => "/path/to/repo.git/",
-        :local?   => true,
+        :scheme     => nil,
+        :host       => nil,
+        :path       => "/path/to/repo.git/",
+        :local?     => true,
+        :to_web_uri => nil,
       })
     end
 
     describe_uri "file:///path/to/repo.git/" do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
-        :scheme   => "file",
-        :host     => "", # I don't really like this but it doesn't hurt anything.
-        :path     => "/path/to/repo.git/",
-        :local?   => true,
+        :scheme     => "file",
+        :host       => "", # I don't really like this but it doesn't hurt anything.
+        :path       => "/path/to/repo.git/",
+        :local?     => true,
+        :to_web_uri => nil,
       })
     end
 
     describe_uri "ssh://git@github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
       it_sets({
-        :scheme         => "ssh",
-        :user           => "git",
-        :password       => nil,
-        :host           => "github.com",
-        :port           => nil,
-        :path           => "/martinemde/gitable.git",
-        :fragment       => nil,
-        :basename       => "gitable.git",
-        :ssh?           => true,
-        :authenticated? => true,
+        :scheme            => "ssh",
+        :user              => "git",
+        :password          => nil,
+        :host              => "github.com",
+        :port              => nil,
+        :path              => "/martinemde/gitable.git",
+        :fragment          => nil,
+        :basename          => "gitable.git",
+        :ssh?              => true,
+        :authenticated?    => true,
+        :github?           => true,
+        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
     end
 
-    describe_uri "http://github.com/martinemde/gitable.git" do
+    describe_uri "https://github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
       it_sets({
-        :scheme   => "http",
-        :user     => nil,
-        :password => nil,
-        :host     => "github.com",
-        :port     => nil,
-        :path     => "/martinemde/gitable.git",
-        :fragment => nil,
-        :basename => "gitable.git",
+        :scheme            => "https",
+        :user              => nil,
+        :password          => nil,
+        :host              => "github.com",
+        :port              => nil,
+        :path              => "/martinemde/gitable.git",
+        :fragment          => nil,
+        :basename          => "gitable.git",
+        :github?           => true,
+        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
     end
 
     describe_uri "git://github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
       it_sets({
-        :scheme   => "git",
-        :user     => nil,
-        :password => nil,
-        :host     => "github.com",
-        :port     => nil,
-        :path     => "/martinemde/gitable.git",
-        :fragment => nil,
-        :basename => "gitable.git",
+        :scheme            => "git",
+        :user              => nil,
+        :password          => nil,
+        :host              => "github.com",
+        :port              => nil,
+        :path              => "/martinemde/gitable.git",
+        :fragment          => nil,
+        :basename          => "gitable.git",
+        :github?           => true,
+        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
     end
 
@@ -461,6 +484,8 @@ describe Gitable::URI do
         :project_name      => "gitable",
         :ssh?              => true,
         :authenticated?    => true,
+        :github?           => true,
+        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
     end
   end
