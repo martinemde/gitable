@@ -9,8 +9,9 @@ Gem::Specification.new do |s|
   s.description = %q{Addressable::URI for Git URIs with special handling for scp-style URIs that Addressable doesn't like.}
 
   s.add_dependency "addressable"
-  s.add_development_dependency "rspec"
+  s.add_development_dependency "rspec", "~>2.0"
   s.add_development_dependency "rake"
+  s.add_development_dependency "rcov"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
