@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Gitable::URI do
-  before do
-    @uri = "ssh://git@github.com/martinemde/gitable.git"
-  end
-
   describe_uri "git://github.com/martinemde/gitable" do
     it "sets the .git extname" do
       subject.extname.should == ""
@@ -73,6 +69,8 @@ describe Gitable::URI do
   #
 
   describe ".parse" do
+    before { @uri = "ssh://git@github.com/martinemde/gitable.git" }
+
     it "returns a Gitable::URI" do
       Gitable::URI.parse(@uri).should be_a_kind_of(Gitable::URI)
     end
@@ -103,6 +101,38 @@ describe Gitable::URI do
         it "raises an Gitable::URI::InvalidURIError with #{uri.inspect}" do
           lambda {
             Gitable::URI.parse(uri)
+          }.should raise_error(Gitable::URI::InvalidURIError)
+        end
+      end
+
+      context "scp uris" do
+        it "raises without path" do
+          lambda {
+            Gitable::ScpURI.parse("http://github.com/path.git")
+          }.should raise_error(Gitable::URI::InvalidURIError)
+        end
+
+        it "raises without path" do
+          lambda {
+            Gitable::ScpURI.new(:user => 'git', :host => 'github.com')
+          }.should raise_error(Gitable::URI::InvalidURIError)
+        end
+
+        it "raises without host" do
+          lambda {
+            Gitable::ScpURI.new(:user => 'git', :path => 'path')
+          }.should raise_error(Gitable::URI::InvalidURIError)
+        end
+
+        it "raises with any scheme" do
+          lambda {
+            Gitable::ScpURI.new(:scheme => 'ssh', :host => 'github.com', :path => 'path')
+          }.should raise_error(Gitable::URI::InvalidURIError)
+        end
+
+        it "raises with any port" do
+          lambda {
+            Gitable::ScpURI.new(:port => 88, :host => 'github.com', :path => 'path')
           }.should raise_error(Gitable::URI::InvalidURIError)
         end
       end

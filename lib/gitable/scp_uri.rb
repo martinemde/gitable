@@ -2,6 +2,38 @@ require 'gitable/uri'
 
 module Gitable
   class ScpURI < Gitable::URI
+    REGEXP = %r|^([^:/?#]+):([^:?#]*)$|
+
+    ##
+    # Expected to be an scp style URI if Addressable interprets it wrong and
+    # it matches our scp regexp
+    #
+    # nil host is an Addressable misunderstanding (therefore it might be scp style)
+    def self.scp?(uri)
+      uri && uri.match(REGEXP) && Addressable::URI.parse(uri).normalized_host.nil?
+    end
+
+    ##
+    # Parse an Scp style git repository URI into a URI object.
+    #
+    # @param [Addressable::URI, #to_str] uri URI of a git repository.
+    #
+    # @return [Gitable::URI, nil] the URI object or nil if nil was passed in.
+    #
+    # @raise [TypeError] The uri must respond to #to_str.
+    # @raise [Gitable::URI::InvalidURIError] When the uri is *total* rubbish.
+    #
+    def self.parse(uri)
+      return uri if uri.nil? || uri.kind_of?(self)
+
+      if scp?(uri)
+        authority, path = uri.scan(REGEXP).flatten
+        Gitable::ScpURI.new(:authority => authority, :path => path)
+      else
+        raise InvalidURIError, "Unable to parse scp style URI: #{uri}"
+      end
+    end
+
 
     # Keep URIs like this as they were input:
     #
@@ -15,11 +47,12 @@ module Gitable
     # @return [String] The same path passed in.
     def path=(new_path)
       super
-      if new_path[0] != ?/ # addressable likes to add a / but scp-style uris are altered by this behaviour
-        @path = path.sub(%r|^/|,'')
-        @normalized_path = normalized_path.sub(%r|^/|,'')
+      if new_path[0..0] != '/' # addressable adds a / but scp-style uris are altered by this behavior
+        @path = path.sub(%r|^/+|,'')
+        @normalized_path = normalized_path.sub(%r|^/+|,'')
+        validate
       end
-      @path
+      path
     end
 
     # Get the URI as a string in the same form it was input.
@@ -57,12 +90,20 @@ module Gitable
     def validate
       return if @validation_deferred
 
-      if !normalized_scheme.to_s.empty? && normalized_host.to_s.empty? && normalized_path.to_s.empty?
-        raise InvalidURIError, "Absolute URI missing hierarchical segment: '#{to_s}'"
-      end
-
       if normalized_host.to_s.empty?
         raise InvalidURIError, "Hostname segment missing: '#{to_s}'"
+      end
+
+      unless normalized_scheme.to_s.empty?
+        raise InvalidURIError, "Scp style URI must not have a scheme: '#{to_s}'"
+      end
+
+      if !normalized_port.to_s.empty?
+        raise InvalidURIError, "Scp style URI cannot have a port: '#{to_s}'"
+      end
+
+      if normalized_path.to_s.empty?
+        raise InvalidURIError, "Absolute URI missing hierarchical segment: '#{to_s}'"
       end
 
       nil

@@ -2,7 +2,6 @@ require 'addressable/uri'
 
 module Gitable
   class URI < Addressable::URI
-    SCP_URI_REGEXP = %r|^([^:/?#]+):([^:?#]*)$|
 
     ##
     # Parse a git repository URI into a URI object.
@@ -20,13 +19,9 @@ module Gitable
       # addressable::URI.parse always returns an instance of Addressable::URI.
       add = super # >:( at inconsistency
 
-      authority = uri.scan(SCP_URI_REGEXP).flatten.first
-
-      if add.normalized_host.nil? && authority
-        Gitable::ScpURI.new(
-          :authority  => authority,
-          :path       => add.normalized_path
-        )
+      if Gitable::ScpURI.scp?(uri)
+        # nil host is an Addressable misunderstanding (therefore it might be scp style)
+        Gitable::ScpURI.parse(uri)
       else
         new(add.omit(:password,:query,:fragment).to_hash)
       end
