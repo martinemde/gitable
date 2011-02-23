@@ -94,7 +94,6 @@ describe Gitable::URI do
       [
         "http://", # nothing but scheme
         "blah:", # pretty much nothing
-        "http://user@example.com/path.git", # unsupported http with user part
         "user@:path.git", # no host
         "user@host:", # no path
       ].each do |uri|
@@ -151,6 +150,7 @@ describe Gitable::URI do
       :local?         => false,
       :ssh?           => false,
       :authenticated? => false,
+      :interactive_authenticated? => false,
       :to_web_uri     => Addressable::URI.parse("https://host.xz/path/to/repo"),
     }
 
@@ -199,6 +199,16 @@ describe Gitable::URI do
       it { subject.to_s.should == @uri }
       it_sets expected.merge({
         :scheme   => "https",
+      })
+    end
+
+    describe_uri "https://user@host.xz/path/to/repo.git/" do
+      it { subject.to_s.should == @uri }
+      it_sets expected.merge({
+        :scheme                     => "https",
+        :user                       => "user",
+        :interactive_authenticated? => true,
+        :authenticated?             => true,
       })
     end
 

@@ -20,7 +20,6 @@ module Gitable
       add = super # >:( at inconsistency
 
       if Gitable::ScpURI.scp?(uri)
-        # nil host is an Addressable misunderstanding (therefore it might be scp style)
         Gitable::ScpURI.parse(uri)
       else
         new(add.omit(:password,:query,:fragment).to_hash)
@@ -110,6 +109,13 @@ module Gitable
       ssh? || (!normalized_user.nil? && normalized_password.nil?)
     end
 
+    # Detect URIs that will require interactive authentication
+    #
+    # @return [Boolean] true if the URI has a user, but is not using ssh
+    def interactive_authenticated?
+      authenticated? && !ssh?
+    end
+
     # Set an extension name, replacing one if it exists.
     #
     # If there is no basename (i.e. no words in the path) this method call will
@@ -155,17 +161,6 @@ module Gitable
         self.path = rpath.sub(%r|#{Regexp.escape(base.reverse)}|, new_basename.reverse).reverse
       end
       basename
-    end
-
-    protected
-
-    def validate
-      return if @validation_deferred
-      super
-
-      if normalized_user && normalized_scheme != 'ssh'
-        raise InvalidURIError, "URIs with 'user@' other than ssh:// and scp-style are not supported."
-      end
     end
   end
 end
