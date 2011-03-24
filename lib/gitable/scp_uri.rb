@@ -1,3 +1,4 @@
+require 'addressable/uri'
 require 'gitable/uri'
 
 module Gitable
