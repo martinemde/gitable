@@ -86,6 +86,13 @@ module Gitable
       true
     end
 
+    # Is this an scp formatted uri? (Yes, always)
+    #
+    # @return [true] always scp formatted uri
+    def scp?
+      true
+    end
+
     protected
 
     def validate

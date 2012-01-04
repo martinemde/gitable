@@ -387,6 +387,11 @@ describe Gitable::URI do
 
     describe_uri "user@host.xz:/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { subject.should be_equivalent('ssh://user@host.xz/path/to/repo.git') }
+      it { subject.should be_equivalent('user@host.xz:/path/to/repo.git') }
+      it { subject.should_not be_equivalent('user@host.xz:path/to/repo.git') } # not absolute
+      it { subject.should_not be_equivalent('/path/to/repo.git') }
+      it { subject.should_not be_equivalent('host.xz:path/to/repo.git') }
       it_sets expected.merge({
         :scheme            => nil,
         :inferred_scheme   => 'ssh',
@@ -437,6 +442,10 @@ describe Gitable::URI do
 
     describe_uri "user@host.xz:path/to/repo.git" do
       it { subject.to_s.should == @uri }
+      it { subject.should_not be_equivalent('ssh://user@host.xz/path/to/repo.git') } # not absolute
+      it { subject.should_not be_equivalent('path/to/repo.git') }
+      it { subject.should_not be_equivalent('host.xz:path/to/repo.git') }
+      it { subject.should_not be_equivalent('user@host.xz:/path/to/repo.git') }
       it_sets expected.merge({
         :scheme            => nil,
         :inferred_scheme   => "ssh",
@@ -449,6 +458,12 @@ describe Gitable::URI do
 
     describe_uri "/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { subject.should be_equivalent(@uri) }
+      it { subject.should be_equivalent('/path/to/repo.git') }
+      it { subject.should be_equivalent('file:///path/to/repo.git') }
+      it { subject.should be_equivalent('file:///path/to/repo.git/') }
+      it { subject.should_not be_equivalent('/path/to/repo/.git') }
+      it { subject.should_not be_equivalent('file:///not/path/repo.git') }
       it_sets expected.merge({
         :scheme          => nil,
         :inferred_scheme => "file",
@@ -461,6 +476,12 @@ describe Gitable::URI do
 
     describe_uri "file:///path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { subject.should be_equivalent(@uri) }
+      it { subject.should be_equivalent('/path/to/repo.git') }
+      it { subject.should be_equivalent('file:///path/to/repo.git') }
+      it { subject.should be_equivalent('/path/to/repo.git/') }
+      it { subject.should_not be_equivalent('/path/to/repo/.git') }
+      it { subject.should_not be_equivalent('file:///not/path/repo.git') }
       it_sets expected.merge({
         :scheme          => "file",
         :inferred_scheme => "file",
@@ -473,6 +494,13 @@ describe Gitable::URI do
 
     describe_uri "ssh://git@github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.should be_equivalent(@uri) }
+      it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }
+      it { subject.should be_equivalent('git@github.com:martinemde/gitable.git') }
+      it { subject.should be_equivalent('git@github.com:/martinemde/gitable.git') }
+      it { subject.should be_equivalent('https://martinemde@github.com/martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
       it_sets({
         :scheme            => "ssh",
         :user              => "git",
@@ -483,7 +511,9 @@ describe Gitable::URI do
         :fragment          => nil,
         :basename          => "gitable.git",
         :ssh?              => true,
+        :scp?              => false,
         :authenticated?    => true,
+        :interactive_authenticated? => false,
         :github?           => true,
         :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
@@ -491,6 +521,13 @@ describe Gitable::URI do
 
     describe_uri "https://github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.should be_equivalent(@uri) }
+      it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
+      it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }
+      it { subject.should be_equivalent('git@github.com:martinemde/gitable.git') }
+      it { subject.should be_equivalent('git@github.com:/martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
       it_sets({
         :scheme            => "https",
         :user              => nil,
@@ -500,13 +537,50 @@ describe Gitable::URI do
         :path              => "/martinemde/gitable.git",
         :fragment          => nil,
         :basename          => "gitable.git",
+        :ssh?              => false,
+        :scp?              => false,
         :github?           => true,
+        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
+      })
+    end
+
+    describe_uri "https://martinemde@github.com/martinemde/gitable.git" do
+      it { subject.to_s.should == @uri }
+      it { subject.should be_equivalent(@uri) }
+      it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
+      it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }
+      it { subject.should be_equivalent('git@github.com:martinemde/gitable.git') }
+      it { subject.should be_equivalent('git@github.com:/martinemde/gitable.git') }
+      it { subject.should be_equivalent('https://github.com/martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
+      it_sets({
+        :scheme            => "https",
+        :user              => "martinemde",
+        :password          => nil,
+        :host              => "github.com",
+        :port              => nil,
+        :path              => "/martinemde/gitable.git",
+        :fragment          => nil,
+        :basename          => "gitable.git",
+        :ssh?              => false,
+        :scp?              => false,
+        :github?           => true,
+        :authenticated?    => true,
+        :interactive_authenticated? => true,
         :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
     end
 
     describe_uri "git://github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.should be_equivalent(@uri) }
+      it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
+      it { subject.should be_equivalent('git@github.com:martinemde/gitable.git') }
+      it { subject.should be_equivalent('git@github.com:/martinemde/gitable.git') }
+      it { subject.should be_equivalent('https://martinemde@github.com/martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
       it_sets({
         :scheme            => "git",
         :user              => nil,
@@ -516,13 +590,23 @@ describe Gitable::URI do
         :path              => "/martinemde/gitable.git",
         :fragment          => nil,
         :basename          => "gitable.git",
+        :ssh?              => false,
+        :scp?              => false,
         :github?           => true,
+        :authenticated?    => false,
+        :interactive_authenticated? => false,
         :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
     end
 
     describe_uri "git@github.com:martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.should be_equivalent(@uri) }
+      it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
+      it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }
+      it { subject.should be_equivalent('https://martinemde@github.com/martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
+      it { subject.should_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
       it_sets({
         :scheme            => nil,
         :inferred_scheme   => 'ssh',
@@ -535,7 +619,9 @@ describe Gitable::URI do
         :basename          => "gitable.git",
         :project_name      => "gitable",
         :ssh?              => true,
+        :scp?              => true,
         :authenticated?    => true,
+        :interactive_authenticated? => false,
         :github?           => true,
         :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })

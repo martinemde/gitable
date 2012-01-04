@@ -59,7 +59,8 @@ module Gitable
       !!normalized_host.to_s.match(/\.?github.com$/)
     end
 
-    # Create a web uri for repositories that follow the github pattern.
+    # Create a web link uri for repositories that follow the github pattern.
+    #
     # This probably won't work for all git hosts, so it's a good idea to use
     # this in conjunction with #github? to help ensure correct links.
     #
@@ -67,7 +68,7 @@ module Gitable
     # @return [Addressable::URI] https://#{host}/#{path_without_git_extension}
     def to_web_uri(uri_scheme='https')
       return nil if normalized_host.to_s.empty?
-      Addressable::URI.new(:scheme => uri_scheme, :host => normalized_host, :port => normalized_port, :path => normalized_path.sub(%r#\.git/?#, ''))
+      Addressable::URI.new(:scheme => uri_scheme, :host => normalized_host, :port => normalized_port, :path => normalized_path.sub(%r#\.git/?$#, ''))
     end
 
     # Tries to guess the project name of the repository.
@@ -102,6 +103,13 @@ module Gitable
       !!normalized_scheme.to_s.match(/ssh/)
     end
 
+    # Is this an scp formatted uri? (No, always)
+    #
+    # @return [false] always false (overridden by scp formatted uris)
+    def scp?
+      false
+    end
+
     # Detect URIs that will require some sort of authentication
     #
     # @return [Boolean] true if the URI uses ssh or has a user but no password
@@ -114,6 +122,35 @@ module Gitable
     # @return [Boolean] true if the URI has a user, but is not using ssh
     def interactive_authenticated?
       authenticated? && !ssh?
+    end
+
+    # Detect if two URIs are equivalent versions of the same uri.
+    #
+    # When both uris are github repositories, uses a more lenient matching
+    # system is used that takes github's repository organization into account.
+    #
+    # For non-github URIs this method requires the two URIs to have the same
+    # host, equivalent paths, and either the same user or an absolute path.
+    #
+    # @return [Boolean] true if the URI probably indicates the same repository.
+    def equivalent?(other_uri)
+      other = Gitable::URI.parse(other_uri)
+
+      same_host = normalized_host.to_s == other.normalized_host.to_s
+
+      if github? && other.github?
+        # github doesn't care about relative vs absolute paths in scp uris (so we can remove leading / for comparison)
+        same_path = normalized_path.sub(%r#\.git/?$#, '').sub(%r#^/#,'') == other.normalized_path.sub(%r#\.git/?$#, '').sub(%r#^/#,'')
+        same_host && same_path
+      else
+        same_path = normalized_path.sub(%r#/$#,'').to_s == other.normalized_path.sub(%r#/$#,'').to_s # remove trailing slashes.
+        same_user = normalized_user == other.normalized_user
+
+        # if the path is absolute, we can assume it's the same for all users (so the user doesn't have to match).
+        same_host && same_path && (path =~ %r#^/# || same_user)
+      end
+    rescue Gitable::URI::InvalidURIError
+      false
     end
 
     # Set an extension name, replacing one if it exists.
