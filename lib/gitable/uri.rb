@@ -27,6 +27,19 @@ module Gitable
     end
 
     ##
+    # Parse a git repository URI into a URI object.
+    # Rescue parse errors and return nil if uri is not parseable.
+    #
+    # @param [Addressable::URI, #to_str] uri URI of a git repository.
+    #
+    # @return [Gitable::URI, nil] The parsed uri, or nil if not parseable.
+    def self.parse_when_valid(uri)
+      parse(uri)
+    rescue TypeError, Gitable::URI::InvalidURIError
+      nil
+    end
+
+    ##
     # Attempts to make a copied URL bar into a git repository URI.
     #
     # First line of defense is for URIs without .git as a basename:

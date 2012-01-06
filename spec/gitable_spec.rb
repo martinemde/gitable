@@ -90,6 +90,10 @@ describe Gitable::URI do
       }.should raise_error(TypeError)
     end
 
+    it "returns nil with bad type on parse_when_valid" do
+      Gitable::URI.parse_when_valid(42).should be_nil
+    end
+
     context "(bad uris)" do
       [
         "http://", # nothing but scheme
@@ -101,6 +105,10 @@ describe Gitable::URI do
           lambda {
             Gitable::URI.parse(uri)
           }.should raise_error(Gitable::URI::InvalidURIError)
+        end
+
+        it "returns nil on parse_when_valid with #{uri.inspect}" do
+          Gitable::URI.parse_when_valid(uri).should be_nil
         end
       end
 
