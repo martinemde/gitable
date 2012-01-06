@@ -2,6 +2,6 @@ source "http://rubygems.org"
 
 gemspec
 
-group :development do
+group :rcov do
   gem 'rcov'
 end
