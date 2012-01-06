@@ -458,6 +458,7 @@ describe Gitable::URI do
 
     describe_uri "/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('/path/to/repo.git') }
       it { subject.should be_equivalent('file:///path/to/repo.git') }
@@ -476,6 +477,7 @@ describe Gitable::URI do
 
     describe_uri "file:///path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('/path/to/repo.git') }
       it { subject.should be_equivalent('file:///path/to/repo.git') }
@@ -494,6 +496,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://git@github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }
       it { subject.should be_equivalent('git@github.com:martinemde/gitable.git') }
@@ -521,6 +524,7 @@ describe Gitable::URI do
 
     describe_uri "https://github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
       it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }
@@ -546,6 +550,7 @@ describe Gitable::URI do
 
     describe_uri "https://martinemde@github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
       it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }
@@ -574,6 +579,7 @@ describe Gitable::URI do
 
     describe_uri "git://github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
       it { subject.should be_equivalent('git@github.com:martinemde/gitable.git') }
@@ -601,6 +607,7 @@ describe Gitable::URI do
 
     describe_uri "git@github.com:martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { subject.inspect.should =~ %r|^#<Gitable::ScpURI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
       it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }

@@ -153,6 +153,13 @@ module Gitable
       false
     end
 
+    # Dun da dun da dun, Inspector Gadget.
+    #
+    # @return [String] I'll get you next time Gadget, NEXT TIME!
+    def inspect
+      "#<#{self.class.to_s} #{to_s}>"
+    end
+
     # Set an extension name, replacing one if it exists.
     #
     # If there is no basename (i.e. no words in the path) this method call will
