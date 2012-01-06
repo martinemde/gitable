@@ -16,11 +16,32 @@ Works with any valid Git URI, because Addressable doesn't.
     # Maintain the same url format.
     uri.to_s   # => 'git@github.com:martinemde/gitable.git'
 
+    # Uses ssh?
+    uri.ssh?   # => true
+
+    # scp format?
+    uri.scp?   # => true
+
     # If it can't guess the name, you named your repository wrong.
     uri.project_name   # => 'gitable'
 
+    # Will this uri require authentication?
+    uri.authenticated? # => true
+
+    # Will I have to interactively type something into git (a password)?
+    uri.interactive_authenticated? # => false
+
+    # Matching public to private git uris?
+    uri.equivalent?('git://github.com/martinemde/gitable.git') # => true
+    uri.equivalent?('https://martinemde@github.com/martinemde/gitable.git') # => true
+
     # Inherited from Addressable::URI
     uri.kind_of?(Addressable::URI)   # => true
+
+    # Teenage Mutant Ninja Urls (mutable uris like Addressable, if you want)
+    uri.path = 'someotheruser/gitable.git'
+    uri.basename = 'umm.git'
+    uri.to_s    # => 'git@github.com:someotheruser/umm.git'
 
 == heuristic_parse
 
