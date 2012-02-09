@@ -1,5 +1,6 @@
 # @author Martin Emde
 module Gitable
-  autoload :URI, 'gitable/uri'
-  autoload :ScpURI, 'gitable/scp_uri'
 end
+
+require 'gitable/uri'
+require 'gitable/scp_uri'

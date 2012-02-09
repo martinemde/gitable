@@ -221,3 +221,5 @@ module Gitable
     end
   end
 end
+
+require 'gitable/scp_uri'
