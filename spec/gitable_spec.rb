@@ -164,6 +164,7 @@ describe Gitable::URI do
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme       => "rsync",
         :project_name => "repo"
@@ -172,6 +173,7 @@ describe Gitable::URI do
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme   => "rsync",
       })
@@ -179,6 +181,7 @@ describe Gitable::URI do
 
     describe_uri "http://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme   => "http",
       })
@@ -186,6 +189,7 @@ describe Gitable::URI do
 
     describe_uri "http://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "http",
         :port           => 8888,
@@ -195,6 +199,7 @@ describe Gitable::URI do
 
     describe_uri "http://12.34.56.78:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "http",
         :host           => "12.34.56.78",
@@ -205,6 +210,7 @@ describe Gitable::URI do
 
     describe_uri "https://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme   => "https",
       })
@@ -212,6 +218,7 @@ describe Gitable::URI do
 
     describe_uri "https://user@host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme                     => "https",
         :user                       => "user",
@@ -222,6 +229,7 @@ describe Gitable::URI do
 
     describe_uri "https://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "https",
         :port           => 8888,
@@ -231,6 +239,7 @@ describe Gitable::URI do
 
     describe_uri "git+ssh://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "git+ssh",
         :ssh?           => true,
@@ -240,6 +249,7 @@ describe Gitable::URI do
 
     describe_uri "git://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme   => "git",
       })
@@ -247,6 +257,7 @@ describe Gitable::URI do
 
     describe_uri "git://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "git",
         :port           => 8888,
@@ -256,6 +267,7 @@ describe Gitable::URI do
 
     describe_uri "git://host.xz/~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "git",
         :path           => "/~user/path/to/repo.git/",
@@ -265,6 +277,7 @@ describe Gitable::URI do
 
     describe_uri "git://host.xz:8888/~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "git",
         :path           => "/~user/path/to/repo.git/",
@@ -275,6 +288,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :ssh?           => true,
@@ -284,6 +298,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://user@host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :user           => "user",
@@ -294,6 +309,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :ssh?           => true,
@@ -303,6 +319,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :port           => 8888,
@@ -314,6 +331,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://user@host.xz/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :user           => "user",
         :scheme         => "ssh",
@@ -324,6 +342,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://user@host.xz:8888/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :user           => "user",
@@ -336,6 +355,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://host.xz/~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :user           => nil,
@@ -348,6 +368,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://user@host.xz/~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :user           => "user",
@@ -360,6 +381,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://host.xz/~/path/to/repo.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :path           => "/~/path/to/repo.git",
@@ -371,6 +393,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://user@host.xz/~/path/to/repo.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme         => "ssh",
         :user           => "user",
@@ -383,6 +406,7 @@ describe Gitable::URI do
 
     describe_uri "host.xz:/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
         :inferred_scheme   => 'ssh',
@@ -395,6 +419,7 @@ describe Gitable::URI do
 
     describe_uri "user@host.xz:/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.should be_equivalent('ssh://user@host.xz/path/to/repo.git') }
       it { subject.should be_equivalent('user@host.xz:/path/to/repo.git') }
       it { subject.should_not be_equivalent('user@host.xz:path/to/repo.git') } # not absolute
@@ -412,6 +437,7 @@ describe Gitable::URI do
 
     describe_uri "host.xz:~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
         :inferred_scheme   => 'ssh',
@@ -425,6 +451,7 @@ describe Gitable::URI do
 
     describe_uri "user@host.xz:~user/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
         :inferred_scheme   => 'ssh',
@@ -438,6 +465,7 @@ describe Gitable::URI do
 
     describe_uri "host.xz:path/to/repo.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it_sets expected.merge({
         :scheme            => nil,
         :inferred_scheme   => 'ssh',
@@ -450,6 +478,7 @@ describe Gitable::URI do
 
     describe_uri "user@host.xz:path/to/repo.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.should_not be_equivalent('ssh://user@host.xz/path/to/repo.git') } # not absolute
       it { subject.should_not be_equivalent('path/to/repo.git') }
       it { subject.should_not be_equivalent('host.xz:path/to/repo.git') }
@@ -466,6 +495,7 @@ describe Gitable::URI do
 
     describe_uri "/path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('/path/to/repo.git') }
@@ -485,6 +515,7 @@ describe Gitable::URI do
 
     describe_uri "file:///path/to/repo.git/" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('/path/to/repo.git') }
@@ -504,6 +535,7 @@ describe Gitable::URI do
 
     describe_uri "ssh://git@github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('git://github.com/martinemde/gitable.git') }
@@ -532,6 +564,7 @@ describe Gitable::URI do
 
     describe_uri "https://github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
@@ -558,6 +591,7 @@ describe Gitable::URI do
 
     describe_uri "https://martinemde@github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
@@ -587,6 +621,7 @@ describe Gitable::URI do
 
     describe_uri "git://github.com/martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.inspect.should =~ %r|^#<Gitable::URI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
@@ -615,6 +650,7 @@ describe Gitable::URI do
 
     describe_uri "git@github.com:martinemde/gitable.git" do
       it { subject.to_s.should == @uri }
+      it { "#{subject}".should == @uri }
       it { subject.inspect.should =~ %r|^#<Gitable::ScpURI #{@uri}>$| }
       it { subject.should be_equivalent(@uri) }
       it { subject.should be_equivalent('ssh://git@github.com/martinemde/gitable.git') }

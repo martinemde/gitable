@@ -71,6 +71,7 @@ module Gitable
           uri_string
         end
     end
+    alias to_str to_s
 
     # Return the actual scheme even though we don't show it
     #
