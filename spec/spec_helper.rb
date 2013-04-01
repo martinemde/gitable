@@ -3,6 +3,11 @@ unless defined? Bundler
   require 'bundler'
 end
 
+if ENV['COVERAGE']
+  require 'simplecov'
+  SimpleCov.start
+end
+
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'gitable'
