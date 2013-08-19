@@ -50,9 +50,8 @@ module Gitable
         authority = scheme
       end
 
-      if host.nil? && uri.match(SCP_REGEXP)
-        authority, path = uri.scan(SCP_REGEXP).flatten
-        Gitable::ScpURI.new(:authority => authority, :path => path)
+      if host.nil? && (parts = uri.scan(SCP_REGEXP)) && parts.any?
+        Gitable::ScpURI.new(:authority => parts.first[0], :path => parts.first[1])
       else
         new(
           :scheme    => scheme,

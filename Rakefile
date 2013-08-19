@@ -14,6 +14,7 @@ end
 
 task :benchmark do
   require 'benchmark'
+  require 'uri'
   require File.expand_path('lib/gitable/uri', File.dirname(__FILE__))
 
   n = 10000
@@ -21,8 +22,10 @@ task :benchmark do
   uri = "git://github.com/martinemde/gitable.git"
   dup = Gitable::URI.parse(uri)
   Benchmark.bmbm do |x|
-    x.report('dup') { n.times { Gitable::URI.parse(dup) } }
-    x.report(uri)   { n.times { Gitable::URI.parse(uri) } }
-    x.report(scp)   { n.times { Gitable::URI.parse(scp) } }
+    x.report('dup')         { n.times { Gitable::URI.parse(dup) } }
+    x.report(uri)           { n.times { Gitable::URI.parse(uri) } }
+    x.report(scp)           { n.times { Gitable::URI.parse(scp) } }
+    x.report("addressable") { n.times { Addressable::URI.parse(uri) } }
+    x.report("uri")         { n.times { URI.parse(uri) } }
   end
 end

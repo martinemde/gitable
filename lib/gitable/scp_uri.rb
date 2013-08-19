@@ -33,7 +33,7 @@ module Gitable
       super
       if new_path[0..0] != '/' # addressable adds a / but scp-style uris are altered by this behavior
         @path = path.sub(%r|^/+|,'')
-        @normalized_path = normalized_path.sub(%r|^/+|,'')
+        @normalized_path = nil
         validate
       end
       path
@@ -82,19 +82,19 @@ module Gitable
     def validate
       return if @validation_deferred
 
-      if normalized_host.to_s.empty?
+      if host.to_s.empty?
         raise InvalidURIError, "Hostname segment missing: '#{to_s}'"
       end
 
-      unless normalized_scheme.to_s.empty?
+      unless scheme.to_s.empty?
         raise InvalidURIError, "Scp style URI must not have a scheme: '#{to_s}'"
       end
 
-      if !normalized_port.to_s.empty?
+      if !port.to_s.empty?
         raise InvalidURIError, "Scp style URI cannot have a port: '#{to_s}'"
       end
 
-      if normalized_path.to_s.empty?
+      if path.to_s.empty?
         raise InvalidURIError, "Absolute URI missing hierarchical segment: '#{to_s}'"
       end
 
