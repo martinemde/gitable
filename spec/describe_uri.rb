@@ -16,7 +16,7 @@ module DescribeURI
     def it_sets(parts)
       parts.each do |part, value|
         it "sets #{part} to #{value.inspect}" do
-          subject.send(part).should == value
+          expect(subject.send(part)).to eq(value)
         end
       end
     end

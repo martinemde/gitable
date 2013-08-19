@@ -16,4 +16,7 @@ require 'describe_uri'
 
 RSpec.configure do |config|
   config.extend DescribeURI
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
 end

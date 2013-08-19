@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.description = %q{Addressable::URI for Git URIs with special handling for scp-style URIs that Addressable doesn't like.}
 
   s.add_dependency "addressable", ">= 2.2.7"
-  s.add_development_dependency "rspec", "~>2.0"
+  s.add_development_dependency "rspec", "~>2.11"
   s.add_development_dependency "rake"
   s.add_development_dependency "simplecov"
 
