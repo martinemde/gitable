@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://github.org/martinemde/gitable"
   s.summary     = %q{Addressable::URI for Git. Gitable::URI.}
   s.description = %q{Addressable::URI for Git URIs with special handling for scp-style URIs that Addressable doesn't like.}
+  s.license     = 'MIT'
 
   s.add_dependency "addressable", ">= 2.2.7"
   s.add_development_dependency "rspec", "~>2.11"
