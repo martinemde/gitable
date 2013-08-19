@@ -3,36 +3,20 @@ require 'gitable/uri'
 
 module Gitable
   class ScpURI < Gitable::URI
-    REGEXP = %r|^([^:/?#]+):([^:?#]*)$|
+    REGEXP =   %r|^([^:/?#]+):([^:?#]*)$|
 
     ##
-    # Expected to be an scp style URI if Addressable interprets it wrong and
-    # it matches our scp regexp
-    #
-    # nil host is an Addressable misunderstanding (therefore it might be scp style)
+    # Deprecated: This serves no purpose. You might as well just parse the URI.
     def self.scp?(uri)
-      uri && uri.match(REGEXP) && Addressable::URI.parse(uri).normalized_host.nil?
+      $stderr.puts "DEPRECATED: Gitable::ScpURI.scp?. You're better off parsing the URI and checking #scp?."
+      parse(uri).scp?
     end
 
     ##
-    # Parse an Scp style git repository URI into a URI object.
-    #
-    # @param [Addressable::URI, #to_str] uri URI of a git repository.
-    #
-    # @return [Gitable::URI, nil] the URI object or nil if nil was passed in.
-    #
-    # @raise [TypeError] The uri must respond to #to_str.
-    # @raise [Gitable::URI::InvalidURIError] When the uri is *total* rubbish.
-    #
+    # Deprecated: This serves no purpose. Just use Gitable::URI.parse.
     def self.parse(uri)
-      return uri if uri.nil? || uri.kind_of?(self)
-
-      if scp?(uri)
-        authority, path = uri.scan(REGEXP).flatten
-        Gitable::ScpURI.new(:authority => authority, :path => path)
-      else
-        raise InvalidURIError, "Unable to parse scp style URI: #{uri}"
-      end
+      $stderr.puts "DEPRECATED: Gitable::ScpURI.parse just runs Gitable::URI.parse. Please use this directly."
+      Gitable::URI.parse(uri)
     end
 
 

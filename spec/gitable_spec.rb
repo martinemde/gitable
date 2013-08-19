@@ -115,12 +115,6 @@ describe Gitable::URI do
       context "scp uris" do
         it "raises without path" do
           lambda {
-            Gitable::ScpURI.parse("http://github.com/path.git")
-          }.should raise_error(Gitable::URI::InvalidURIError)
-        end
-
-        it "raises without path" do
-          lambda {
             Gitable::ScpURI.new(:user => 'git', :host => 'github.com')
           }.should raise_error(Gitable::URI::InvalidURIError)
         end

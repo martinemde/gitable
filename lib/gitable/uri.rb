@@ -14,15 +14,34 @@ module Gitable
     # @raise [Gitable::URI::InvalidURIError] When the uri is *total* rubbish.
     #
     def self.parse(uri)
-      return uri if uri.nil? || uri.kind_of?(self)
+      return nil if uri.nil?
+      return uri.dup if uri.kind_of?(self)
 
-      # addressable::URI.parse always returns an instance of Addressable::URI.
-      add = super # >:( at inconsistency
+      # Copied from Addressable to speed up our parsing.
+      #
+      # If a URI object of the Ruby standard library variety is passed,
+      # convert it to a string, then parse the string.
+      # We do the check this way because we don't want to accidentally
+      # cause a missing constant exception to be thrown.
+      if uri.class.name =~ /^URI\b/
+        uri = uri.to_s
+      end
 
-      if Gitable::ScpURI.scp?(uri)
-        Gitable::ScpURI.parse(uri)
+      # Otherwise, convert to a String
+      begin
+        uri = uri.to_str
+      rescue TypeError, NoMethodError
+        raise TypeError, "Can't convert #{uri.class} into String."
+      end if not uri.is_a? String
+
+      addr = super(uri)
+
+      # nil host is our sign that it's an scp URI that addressable can't parse
+      if uri.match(ScpURI::REGEXP) && addr.normalized_host.nil?
+        authority, path = uri.scan(ScpURI::REGEXP).flatten
+        Gitable::ScpURI.new(:authority => authority, :path => path)
       else
-        new(add.omit(:password,:query,:fragment).to_hash)
+        addr
       end
     end
 
