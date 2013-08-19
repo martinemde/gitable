@@ -2,6 +2,8 @@ require 'addressable/uri'
 
 module Gitable
   class URI < Addressable::URI
+    SCP_REGEXP =  %r|^([^:/?#]+):([^:?#]*)$|
+    URIREGEX = %r|^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$|
 
     ##
     # Parse a git repository URI into a URI object.
@@ -34,14 +36,31 @@ module Gitable
         raise TypeError, "Can't convert #{uri.class} into String."
       end if not uri.is_a? String
 
-      addr = super(uri)
+      # This Regexp supplied as an example in RFC 3986, and it works great.
+      fragments = uri.scan(URIREGEX)[0]
+      scheme    = fragments[1]
+      authority = fragments[3]
+      path      = fragments[4]
+      query     = fragments[6]
+      fragment  = fragments[8]
+      host = nil
+      if authority
+        host = authority.gsub(/^([^\[\]]*)@/, '').gsub(/:([^:@\[\]]*?)$/, '')
+      else
+        authority = scheme
+      end
 
-      # nil host is our sign that it's an scp URI that addressable can't parse
-      if uri.match(ScpURI::REGEXP) && addr.normalized_host.nil?
-        authority, path = uri.scan(ScpURI::REGEXP).flatten
+      if host.nil? && uri.match(SCP_REGEXP)
+        authority, path = uri.scan(SCP_REGEXP).flatten
         Gitable::ScpURI.new(:authority => authority, :path => path)
       else
-        addr
+        new(
+          :scheme    => scheme,
+          :authority => authority,
+          :path      => path,
+          :query     => query,
+          :fragment  => fragment
+        )
       end
     end
 

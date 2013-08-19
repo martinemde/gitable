@@ -3,7 +3,6 @@ require 'gitable/uri'
 
 module Gitable
   class ScpURI < Gitable::URI
-    REGEXP =   %r|^([^:/?#]+):([^:?#]*)$|
 
     ##
     # Deprecated: This serves no purpose. You might as well just parse the URI.
