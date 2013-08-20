@@ -8,7 +8,7 @@ module Gitable
     # Deprecated: This serves no purpose. You might as well just parse the URI.
     def self.scp?(uri)
       $stderr.puts "DEPRECATED: Gitable::ScpURI.scp?. You're better off parsing the URI and checking #scp?."
-      parse(uri).scp?
+      Gitable::URI.parse(uri).scp?
     end
 
     ##

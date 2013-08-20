@@ -184,7 +184,8 @@ module Gitable
     #
     # @return [Boolean] true if the URI probably indicates the same repository.
     def equivalent?(other_uri)
-      other = Gitable::URI.parse(other_uri)
+      other = Gitable::URI.parse_when_valid(other_uri)
+      return false unless other
 
       same_host = normalized_host.to_s == other.normalized_host.to_s
 
@@ -199,8 +200,6 @@ module Gitable
         # if the path is absolute, we can assume it's the same for all users (so the user doesn't have to match).
         same_host && same_path && (path =~ %r#^/# || same_user)
       end
-    rescue Gitable::URI::InvalidURIError
-      false
     end
 
     # Dun da dun da dun, Inspector Gadget.

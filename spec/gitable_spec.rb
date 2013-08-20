@@ -79,9 +79,25 @@ describe Gitable::URI do
       expect(Gitable::URI.parse(nil)).to be_nil
     end
 
-    it "returns the same uri when passed a Gitable::URI" do
+    it "returns a Gitable::URI when passed a URI" do
+      stdlib_uri = URI.parse(@uri)
+      gitable = Gitable::URI.parse(stdlib_uri)
+      expect(gitable).to be_a_kind_of(Gitable::URI)
+      expect(gitable.to_s).to eq(stdlib_uri.to_s)
+    end
+
+    it "returns a Gitable::URI when passed an Addressable::URI" do
+      addr_uri = Addressable::URI.parse(@uri)
+      gitable = Gitable::URI.parse(addr_uri)
+      expect(gitable).to be_a_kind_of(Gitable::URI)
+      expect(gitable.to_s).to eq(addr_uri.to_s)
+    end
+
+    it "returns a duplicate of the uri when passed a Gitable::URI" do
       gitable = Gitable::URI.parse(@uri)
-      expect(Gitable::URI.parse(gitable)).to eq(gitable)
+      parsed = Gitable::URI.parse(gitable)
+      expect(parsed).to eq(gitable)
+      expect(parsed).to_not eq(gitable.object_id)
     end
 
     it "raises a TypeError on bad type" do
@@ -110,6 +126,10 @@ describe Gitable::URI do
 
           it "returns nil on parse_when_valid" do
             expect(Gitable::URI.parse_when_valid(uri)).to be_nil
+          end
+
+          it "is not equivalent to a bad uri" do
+            expect(Gitable::URI.parse('git://github.com/martinemde/gitable.git')).to_not be_equivalent(uri)
           end
         end
       end
