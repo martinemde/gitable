@@ -1,10 +1,20 @@
-= Gitable
+# Gitable
 
-== Addressable::URI for Git.
+[![Gem Version](https://badge.fury.io/rb/gitable.png)][gem]
+[![Build Status](https://travis-ci.org/martinemde/gitable.png?branch=master)][travis]
+[![Dependency Status](https://gemnasium.com/martinemde/gitable.png?travis)][gemnasium]
+[![Code Climate](https://codeclimate.com/github/martinemde/gitable.png)][codeclimate]
+
+[gem]: https://rubygems.org/gems/gitable
+[travis]: https://travis-ci.org/martinemde/gitable
+[gemnasium]: https://gemnasium.com/martinemde/gitable
+[codeclimate]: https://codeclimate.com/github/martinemde/gitable
+
+## Addressable::URI for Git.
 
 Works with any valid Git URI, because Addressable doesn't.
 
-== Example!?
+## Example!?
 
     require 'gitable/uri'
     uri = Gitable::URI.parse('git@github.com:martinemde/gitable.git')
@@ -58,7 +68,7 @@ Teenage Mutant Ninja Urls (mutable uris like Addressable, if you want)
     uri.basename = 'umm.git'
     uri.to_s    # => 'git@github.com:someotheruser/umm.git'
 
-== heuristic_parse
+## heuristic_parse
 
 You can use Gitable::URI.heuristic_parse to take user input.
 
@@ -73,10 +83,10 @@ heuristic_parse is currently very limited. If the url doesn't end in .git, it
 switches http:// to git:// and adds .git to the basename.
 This works fine for github.com and gitorious.org but will happily screw up other URIs.
 
-== That's it?
+## That's it?
 
 Yep. What else did you expect? (let me know or write a patch)
 
-== Copyright
+## Copyright
 
 Copyright (c) 2010 Martin Emde. See LICENSE for details.
