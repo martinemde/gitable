@@ -83,22 +83,26 @@ module Gitable
       return if @validation_deferred
 
       if host.to_s.empty?
-        raise InvalidURIError, "Hostname segment missing: '#{to_s}'"
+        invalid! "Hostname segment missing"
       end
 
-      unless scheme.to_s.empty?
-        raise InvalidURIError, "Scp style URI must not have a scheme: '#{to_s}'"
+      if !scheme.to_s.empty?
+        invalid! "Scp style URI must not have a scheme"
       end
 
       if !port.to_s.empty?
-        raise InvalidURIError, "Scp style URI cannot have a port: '#{to_s}'"
+        invalid! "Scp style URI cannot have a port"
       end
 
       if path.to_s.empty?
-        raise InvalidURIError, "Absolute URI missing hierarchical segment: '#{to_s}'"
+        invalid! "Absolute URI missing hierarchical segment"
       end
 
       nil
+    end
+
+    def invalid!(reason)
+      raise InvalidURIError, "#{reason}: '#{to_s}'"
     end
   end
 end
