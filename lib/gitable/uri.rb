@@ -44,14 +44,15 @@ module Gitable
       query     = fragments[6]
       fragment  = fragments[8]
       host = nil
+
       if authority
         host = authority.gsub(/^([^\[\]]*)@/, '').gsub(/:([^:@\[\]]*?)$/, '')
       else
         authority = scheme
       end
 
-      if host.nil? && (parts = uri.scan(SCP_REGEXP)) && parts.any?
-        Gitable::ScpURI.new(:authority => parts.first[0], :path => parts.first[1])
+      if host.nil? && uri =~ SCP_REGEXP
+        Gitable::ScpURI.new(:authority => $1, :path => $2)
       else
         new(
           :scheme    => scheme,
