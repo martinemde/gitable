@@ -125,7 +125,11 @@ module Gitable
     #
     # @return [String] Project name without .git
     def project_name
-      basename.sub(/\.git$/,'')
+      basename.sub(/\.git\/?$/,'')
+    end
+
+    def org_project
+      normalized_path.sub(/^\//,'').sub(/\.git\/?$/,'')
     end
 
     # Detect local filesystem URIs.
@@ -186,19 +190,15 @@ module Gitable
     def equivalent?(other_uri)
       other = Gitable::URI.parse_when_valid(other_uri)
       return false unless other
+      return false unless normalized_host.to_s == other.normalized_host.to_s
 
-      same_host = normalized_host.to_s == other.normalized_host.to_s
-
-      if github? && other.github?
-        # github doesn't care about relative vs absolute paths in scp uris (so we can remove leading / for comparison)
-        same_path = normalized_path.sub(%r#\.git/?$#, '').sub(%r#^/#,'') == other.normalized_path.sub(%r#\.git/?$#, '').sub(%r#^/#,'')
-        same_host && same_path
+      if github?
+        # github doesn't care about relative vs absolute paths in scp uris
+        org_project == other.org_project
       else
-        same_path = normalized_path.sub(%r#/$#,'').to_s == other.normalized_path.sub(%r#/$#,'').to_s # remove trailing slashes.
-        same_user = normalized_user == other.normalized_user
-
         # if the path is absolute, we can assume it's the same for all users (so the user doesn't have to match).
-        same_host && same_path && (path =~ %r#^/# || same_user)
+        normalized_path.sub(/\/$/,'') == other.normalized_path.sub(/\/$/,'') &&
+          (path[0] == '/' || normalized_user == other.normalized_user)
       end
     end
 
