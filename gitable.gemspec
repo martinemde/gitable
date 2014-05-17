@@ -5,8 +5,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Martin Emde"]
   s.email       = ["martin.emde@gmail.com"]
   s.homepage    = "http://github.org/martinemde/gitable"
-  s.summary     = %q{Addressable::URI for Git. Gitable::URI.}
-  s.description = %q{Addressable::URI for Git URIs with special handling for scp-style URIs that Addressable doesn't like.}
+  s.summary     = %q{Addressable::URI with additional support for Git "URIs"}
+  s.description = %q{Addressable::URI for Git "URIs" with special handling for scp-style remotes that Addressable intentionally doesn't parse.}
   s.license     = 'MIT'
 
   s.add_dependency "addressable", ">= 2.2.7"
