@@ -97,7 +97,7 @@ module Gitable
       # Addressable::URI.heuristic_parse _does_ return the correct type :)
       gitable = super # boo inconsistency
 
-      if gitable.github?
+      if gitable.github? || gitable.bitbucket?
         gitable.extname = "git"
       end
       gitable
@@ -110,10 +110,18 @@ module Gitable
       !!normalized_host.to_s.match(/\.?github.com$/)
     end
 
+    # Is this uri a bitbucket uri?
+    #
+    # @return [Boolean] bitbucket.org is the host?
+    def bitbucket?
+      !!normalized_host.to_s.match(/\.?bitbucket.org$/)
+    end
+
     # Create a web link uri for repositories that follow the github pattern.
     #
     # This probably won't work for all git hosts, so it's a good idea to use
-    # this in conjunction with #github? to help ensure correct links.
+    # this in conjunction with #github? or #bitbucket? to help ensure correct
+    # links.
     #
     # @param [String] Scheme of the web uri (smart defaults)
     # @return [Addressable::URI] https://#{host}/#{path_without_git_extension}
@@ -193,7 +201,7 @@ module Gitable
       return false unless other
       return false unless normalized_host.to_s == other.normalized_host.to_s
 
-      if github?
+      if github? || bitbucket?
         # github doesn't care about relative vs absolute paths in scp uris
         org_project == other.org_project
       else

@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "addressable", ">= 2.2.7"
   s.add_development_dependency "rspec", "~>2.11"
-  s.add_development_dependency "rake"
+  s.add_development_dependency "rake", "< 11" 
   s.add_development_dependency "simplecov"
 
   s.files         = `git ls-files`.split("\n")
