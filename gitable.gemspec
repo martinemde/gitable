@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.description = %q{Addressable::URI for Git "URIs" with special handling for scp-style remotes that Addressable intentionally doesn't parse.}
   s.license     = 'MIT'
 
-  s.add_dependency "addressable", ">= 2.2.7"
+  s.add_dependency "addressable", "~> 2.2", ">= 2.2.7"
   s.add_development_dependency "rspec", "~> 3.0"
   s.add_development_dependency "rake"
   s.add_development_dependency "simplecov"
