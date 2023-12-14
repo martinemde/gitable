@@ -67,6 +67,7 @@ describe Gitable::URI do
   # /path/to/repo.git/
   # file:///path/to/repo.git/
   #
+  require "uri"
 
   describe ".parse" do
     before { @uri = "ssh://git@github.com/martinemde/gitable.git" }
