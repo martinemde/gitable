@@ -97,7 +97,7 @@ module Gitable
       # Addressable::URI.heuristic_parse _does_ return the correct type :)
       gitable = super # boo inconsistency
 
-      if gitable.github? || gitable.bitbucket?
+      if gitable.github? || gitable.bitbucket? || gitable.gitlab?
         gitable.extname = "git"
       end
       gitable
@@ -108,6 +108,13 @@ module Gitable
     # @return [Boolean] github.com is the host?
     def github?
       !!normalized_host.to_s.match(/\.?github.com$/)
+    end
+
+    # Is this uri a gitlab uri?
+    #
+    # @return [Boolean] gitlab.com is the host?
+    def gitlab?
+      !!normalized_host.to_s.match(/\.?gitlab.com$/)
     end
 
     # Is this uri a bitbucket uri?
