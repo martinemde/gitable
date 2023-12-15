@@ -1,31 +1,31 @@
-require 'bundler/gem_tasks'
+# frozen_string_literal: true
 
-require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new do |t|
-  t.rspec_opts = %w[--color]
-  t.pattern = 'spec/**/*_spec.rb'
-end
-task :default => :spec
+require "bundler/gem_tasks"
+require "rspec/core/rake_task"
 
-task :coverage => [:coverage_env, :spec]
+RSpec::Core::RakeTask.new(:spec)
+
+require "standard/rake"
+
+task default: %i[spec standard]
+
+task coverage: [:coverage_env, :spec]
 task :coverage_env do
-  ENV['COVERAGE'] = '1'
+  ENV["COVERAGE"] = "1"
 end
 
 task :benchmark do
-  require 'benchmark'
-  require 'uri'
-  require File.expand_path('lib/gitable/uri', File.dirname(__FILE__))
-
-  n = 10000
+  require "benchmark/ips"
+  require "uri"
+  require File.expand_path("lib/gitable/uri", File.dirname(__FILE__))
   scp = "git@github.com:martinemde/gitable.git"
   uri = "git://github.com/martinemde/gitable.git"
   dup = Gitable::URI.parse(uri)
-  Benchmark.bmbm do |x|
-    x.report('dup')         { n.times { Gitable::URI.parse(dup) } }
-    x.report(uri)           { n.times { Gitable::URI.parse(uri) } }
-    x.report(scp)           { n.times { Gitable::URI.parse(scp) } }
-    x.report("addressable") { n.times { Addressable::URI.parse(uri) } }
-    x.report("uri")         { n.times { URI.parse(uri) } }
+  Benchmark.ips do |x|
+    x.report("dup") { Gitable::URI.parse(dup) }
+    x.report(uri) { Gitable::URI.parse(uri) }
+    x.report(scp) { Gitable::URI.parse(scp) }
+    x.report("addressable") { Addressable::URI.parse(uri) }
+    x.report("uri") { URI.parse(uri) }
   end
 end

@@ -1,28 +1,11 @@
-## MAC OS
-.DS_Store
+/.bundle/
+/.yardoc
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
 
-## TEXTMATE
-*.tmproj
-tmtags
-
-## EMACS
-*~
-\#*
-.\#*
-
-## VIM
-*.swp
-
-## PROJECT::GENERAL
-gbin
-coverage
-doc
-rdoc
-pkg
-vendor/gems
-vendor/bundle
-.yardoc
-.bundle
-Gemfile.lock
-
-## PROJECT::SPECIFIC
+# rspec failure tracking
+.rspec_status

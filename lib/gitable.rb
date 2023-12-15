@@ -1,6 +1,9 @@
-# @author Martin Emde
+# frozen_string_literal: true
+
+require_relative "gitable/version"
+
 module Gitable
 end
 
-require 'gitable/uri'
-require 'gitable/scp_uri'
+require_relative "gitable/uri"
+require_relative "gitable/scp_uri"
