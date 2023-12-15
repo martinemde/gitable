@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Gitable::URI do
   describe_uri "git://github.com/martinemde/gitable" do
@@ -116,7 +116,7 @@ describe Gitable::URI do
         "http://", # nothing but scheme
         "blah:", # pretty much nothing
         "user@:path.git", # no host
-        "user@host:", # no path
+        "user@host:" # no path
       ].each do |uri|
         context uri.inspect do
           it "raises an Gitable::URI::InvalidURIError" do
@@ -130,7 +130,7 @@ describe Gitable::URI do
           end
 
           it "is not equivalent to a bad uri" do
-            expect(Gitable::URI.parse('git://github.com/martinemde/gitable.git')).to_not be_equivalent(uri)
+            expect(Gitable::URI.parse("git://github.com/martinemde/gitable.git")).to_not be_equivalent(uri)
           end
         end
       end
@@ -138,725 +138,725 @@ describe Gitable::URI do
       context "scp uris" do
         it "raises without path" do
           expect {
-            Gitable::ScpURI.new(:user => 'git', :host => 'github.com')
+            Gitable::ScpURI.new(user: "git", host: "github.com")
           }.to raise_error(Gitable::URI::InvalidURIError)
         end
 
         it "raises without host" do
           expect {
-            Gitable::ScpURI.new(:user => 'git', :path => 'path')
+            Gitable::ScpURI.new(user: "git", path: "path")
           }.to raise_error(Gitable::URI::InvalidURIError)
         end
 
         it "raises with any scheme" do
           expect {
-            Gitable::ScpURI.new(:scheme => 'ssh', :host => 'github.com', :path => 'path')
+            Gitable::ScpURI.new(scheme: "ssh", host: "github.com", path: "path")
           }.to raise_error(Gitable::URI::InvalidURIError)
         end
 
         it "raises with any port" do
           expect {
-            Gitable::ScpURI.new(:port => 88, :host => 'github.com', :path => 'path')
+            Gitable::ScpURI.new(port: 88, host: "github.com", path: "path")
           }.to raise_error(Gitable::URI::InvalidURIError)
         end
       end
     end
 
     expected = {
-      :user           => nil,
-      :password       => nil,
-      :host           => "host.xz",
-      :port           => nil,
-      :path           => "/path/to/repo.git/",
-      :basename       => "repo.git",
-      :query          => nil,
-      :fragment       => nil,
-      :project_name   => "repo",
-      :local?         => false,
-      :ssh?           => false,
-      :authenticated? => false,
-      :interactive_authenticated? => false,
-      :to_web_uri     => Addressable::URI.parse("https://host.xz/path/to/repo"),
+      user: nil,
+      password: nil,
+      host: "host.xz",
+      port: nil,
+      path: "/path/to/repo.git/",
+      basename: "repo.git",
+      query: nil,
+      fragment: nil,
+      project_name: "repo",
+      local?: false,
+      ssh?: false,
+      authenticated?: false,
+      interactive_authenticated?: false,
+      to_web_uri: Addressable::URI.parse("https://host.xz/path/to/repo")
     }
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme       => "rsync",
-        :project_name => "repo"
+        scheme: "rsync",
+        project_name: "repo"
       })
     end
 
     describe_uri "rsync://host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme   => "rsync",
+        scheme: "rsync"
       })
     end
 
     describe_uri "http://host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme   => "http",
+        scheme: "http"
       })
     end
 
     describe_uri "http://host.xz:8888/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "http",
-        :port           => 8888,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
+        scheme: "http",
+        port: 8888,
+        to_web_uri: Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
     describe_uri "http://12.34.56.78:8888/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "http",
-        :host           => "12.34.56.78",
-        :port           => 8888,
-        :to_web_uri     => Addressable::URI.parse("https://12.34.56.78:8888/path/to/repo")
+        scheme: "http",
+        host: "12.34.56.78",
+        port: 8888,
+        to_web_uri: Addressable::URI.parse("https://12.34.56.78:8888/path/to/repo")
       })
     end
 
     describe_uri "https://host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme   => "https",
+        scheme: "https"
       })
     end
 
     describe_uri "https://user@host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme                     => "https",
-        :user                       => "user",
-        :interactive_authenticated? => true,
-        :authenticated?             => true,
+        scheme: "https",
+        user: "user",
+        interactive_authenticated?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "https://host.xz:8888/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "https",
-        :port           => 8888,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
+        scheme: "https",
+        port: 8888,
+        to_web_uri: Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
     describe_uri "git+ssh://host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "git+ssh",
-        :ssh?           => true,
-        :authenticated? => true,
+        scheme: "git+ssh",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "git://host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme   => "git",
+        scheme: "git"
       })
     end
 
     describe_uri "git://host.xz:8888/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "git",
-        :port           => 8888,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
+        scheme: "git",
+        port: 8888,
+        to_web_uri: Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
     describe_uri "git://host.xz/~user/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "git",
-        :path           => "/~user/path/to/repo.git/",
-        :to_web_uri     => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
+        scheme: "git",
+        path: "/~user/path/to/repo.git/",
+        to_web_uri: Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
     describe_uri "git://host.xz:8888/~user/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "git",
-        :path           => "/~user/path/to/repo.git/",
-        :port           => 8888,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/~user/path/to/repo")
+        scheme: "git",
+        path: "/~user/path/to/repo.git/",
+        port: 8888,
+        to_web_uri: Addressable::URI.parse("https://host.xz:8888/~user/path/to/repo")
       })
     end
 
     describe_uri "ssh://host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :ssh?           => true,
-        :authenticated? => true,
+        scheme: "ssh",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "ssh://user@host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :user           => "user",
-        :ssh?           => true,
-        :authenticated? => true,
+        scheme: "ssh",
+        user: "user",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "ssh://host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :ssh?           => true,
-        :authenticated? => true,
+        scheme: "ssh",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "ssh://host.xz:8888/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :port           => 8888,
-        :ssh?           => true,
-        :authenticated? => true,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
+        scheme: "ssh",
+        port: 8888,
+        ssh?: true,
+        authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
     describe_uri "ssh://user@host.xz/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :user           => "user",
-        :scheme         => "ssh",
-        :ssh?           => true,
-        :authenticated? => true,
+        user: "user",
+        scheme: "ssh",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "ssh://user@host.xz:8888/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :user           => "user",
-        :port           => 8888,
-        :ssh?           => true,
-        :authenticated? => true,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz:8888/path/to/repo")
+        scheme: "ssh",
+        user: "user",
+        port: 8888,
+        ssh?: true,
+        authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://host.xz:8888/path/to/repo")
       })
     end
 
     describe_uri "ssh://host.xz/~user/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :user           => nil,
-        :path           => "/~user/path/to/repo.git/",
-        :ssh?           => true,
-        :authenticated? => true,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
+        scheme: "ssh",
+        user: nil,
+        path: "/~user/path/to/repo.git/",
+        ssh?: true,
+        authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
     describe_uri "ssh://user@host.xz/~user/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :user           => "user",
-        :path           => "/~user/path/to/repo.git/",
-        :ssh?           => true,
-        :authenticated? => true,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
+        scheme: "ssh",
+        user: "user",
+        path: "/~user/path/to/repo.git/",
+        ssh?: true,
+        authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
     describe_uri "ssh://host.xz/~/path/to/repo.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :path           => "/~/path/to/repo.git",
-        :ssh?           => true,
-        :authenticated? => true,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz/~/path/to/repo")
+        scheme: "ssh",
+        path: "/~/path/to/repo.git",
+        ssh?: true,
+        authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://host.xz/~/path/to/repo")
       })
     end
 
     describe_uri "ssh://user@host.xz/~/path/to/repo.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme         => "ssh",
-        :user           => "user",
-        :path           => "/~/path/to/repo.git",
-        :ssh?           => true,
-        :authenticated? => true,
-        :to_web_uri     => Addressable::URI.parse("https://host.xz/~/path/to/repo")
+        scheme: "ssh",
+        user: "user",
+        path: "/~/path/to/repo.git",
+        ssh?: true,
+        authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://host.xz/~/path/to/repo")
       })
     end
 
     describe_uri "host.xz:/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme            => nil,
-        :inferred_scheme   => 'ssh',
-        :user              => nil,
-        :path              => "/path/to/repo.git/",
-        :ssh?              => true,
-        :authenticated?    => true,
+        scheme: nil,
+        inferred_scheme: "ssh",
+        user: nil,
+        path: "/path/to/repo.git/",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "user@host.xz:/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject).to be_equivalent('ssh://user@host.xz/path/to/repo.git') }
-      it { expect(subject).to be_equivalent('user@host.xz:/path/to/repo.git') }
-      it { expect(subject).to_not be_equivalent('user@host.xz:path/to/repo.git') } # not absolute
-      it { expect(subject).to_not be_equivalent('/path/to/repo.git') }
-      it { expect(subject).to_not be_equivalent('host.xz:path/to/repo.git') }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject).to be_equivalent("ssh://user@host.xz/path/to/repo.git") }
+      it { expect(subject).to be_equivalent("user@host.xz:/path/to/repo.git") }
+      it { expect(subject).to_not be_equivalent("user@host.xz:path/to/repo.git") } # not absolute
+      it { expect(subject).to_not be_equivalent("/path/to/repo.git") }
+      it { expect(subject).to_not be_equivalent("host.xz:path/to/repo.git") }
       it_sets expected.merge({
-        :scheme            => nil,
-        :inferred_scheme   => 'ssh',
-        :user              => "user",
-        :path              => "/path/to/repo.git/",
-        :ssh?              => true,
-        :authenticated?    => true,
+        scheme: nil,
+        inferred_scheme: "ssh",
+        user: "user",
+        path: "/path/to/repo.git/",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "host.xz:~user/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme            => nil,
-        :inferred_scheme   => 'ssh',
-        :user              => nil,
-        :path              => "~user/path/to/repo.git/",
-        :ssh?              => true,
-        :authenticated?    => true,
-        :to_web_uri        => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
+        scheme: nil,
+        inferred_scheme: "ssh",
+        user: nil,
+        path: "~user/path/to/repo.git/",
+        ssh?: true,
+        authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
     describe_uri "user@host.xz:~user/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme            => nil,
-        :inferred_scheme   => 'ssh',
-        :user              => "user",
-        :path              => "~user/path/to/repo.git/",
-        :ssh?              => true,
-        :authenticated?    => true,
-        :to_web_uri        => Addressable::URI.parse("https://host.xz/~user/path/to/repo")
+        scheme: nil,
+        inferred_scheme: "ssh",
+        user: "user",
+        path: "~user/path/to/repo.git/",
+        ssh?: true,
+        authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://host.xz/~user/path/to/repo")
       })
     end
 
     describe_uri "host.xz:path/to/repo.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
+      it { expect(subject.to_s).to eq(@uri) }
       it_sets expected.merge({
-        :scheme            => nil,
-        :inferred_scheme   => 'ssh',
-        :user              => nil,
-        :path              => "path/to/repo.git",
-        :ssh?              => true,
-        :authenticated?    => true,
+        scheme: nil,
+        inferred_scheme: "ssh",
+        user: nil,
+        path: "path/to/repo.git",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "user@host.xz:path/to/repo.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject).to_not be_equivalent('ssh://user@host.xz/path/to/repo.git') } # not absolute
-      it { expect(subject).to_not be_equivalent('path/to/repo.git') }
-      it { expect(subject).to_not be_equivalent('host.xz:path/to/repo.git') }
-      it { expect(subject).to_not be_equivalent('user@host.xz:/path/to/repo.git') }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject).to_not be_equivalent("ssh://user@host.xz/path/to/repo.git") } # not absolute
+      it { expect(subject).to_not be_equivalent("path/to/repo.git") }
+      it { expect(subject).to_not be_equivalent("host.xz:path/to/repo.git") }
+      it { expect(subject).to_not be_equivalent("user@host.xz:/path/to/repo.git") }
       it_sets expected.merge({
-        :scheme            => nil,
-        :inferred_scheme   => "ssh",
-        :user              => "user",
-        :path              => "path/to/repo.git",
-        :ssh?              => true,
-        :authenticated?    => true,
+        scheme: nil,
+        inferred_scheme: "ssh",
+        user: "user",
+        path: "path/to/repo.git",
+        ssh?: true,
+        authenticated?: true
       })
     end
 
     describe_uri "/path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('/path/to/repo.git') }
-      it { expect(subject).to be_equivalent('file:///path/to/repo.git') }
-      it { expect(subject).to be_equivalent('file:///path/to/repo.git/') }
-      it { expect(subject).to_not be_equivalent('/path/to/repo/.git') }
-      it { expect(subject).to_not be_equivalent('file:///not/path/repo.git') }
+      it { expect(subject).to be_equivalent("/path/to/repo.git") }
+      it { expect(subject).to be_equivalent("file:///path/to/repo.git") }
+      it { expect(subject).to be_equivalent("file:///path/to/repo.git/") }
+      it { expect(subject).to_not be_equivalent("/path/to/repo/.git") }
+      it { expect(subject).to_not be_equivalent("file:///not/path/repo.git") }
       it_sets expected.merge({
-        :scheme          => nil,
-        :inferred_scheme => "file",
-        :host            => nil,
-        :path            => "/path/to/repo.git/",
-        :local?          => true,
-        :to_web_uri      => nil,
+        scheme: nil,
+        inferred_scheme: "file",
+        host: nil,
+        path: "/path/to/repo.git/",
+        local?: true,
+        to_web_uri: nil
       })
     end
 
     describe_uri "file:///path/to/repo.git/" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('/path/to/repo.git') }
-      it { expect(subject).to be_equivalent('file:///path/to/repo.git') }
-      it { expect(subject).to be_equivalent('/path/to/repo.git/') }
-      it { expect(subject).to_not be_equivalent('/path/to/repo/.git') }
-      it { expect(subject).to_not be_equivalent('file:///not/path/repo.git') }
+      it { expect(subject).to be_equivalent("/path/to/repo.git") }
+      it { expect(subject).to be_equivalent("file:///path/to/repo.git") }
+      it { expect(subject).to be_equivalent("/path/to/repo.git/") }
+      it { expect(subject).to_not be_equivalent("/path/to/repo/.git") }
+      it { expect(subject).to_not be_equivalent("file:///not/path/repo.git") }
       it_sets expected.merge({
-        :scheme          => "file",
-        :inferred_scheme => "file",
-        :host            => "",
-        :path            => "/path/to/repo.git/",
-        :local?          => true,
-        :to_web_uri      => nil,
+        scheme: "file",
+        inferred_scheme: "file",
+        host: "",
+        path: "/path/to/repo.git/",
+        local?: true,
+        to_web_uri: nil
       })
     end
 
     describe_uri "ssh://git@github.com/martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('git://github.com/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@github.com:martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@github.com:/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('https://martinemde@github.com/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("git://github.com/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@github.com:martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@github.com:/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("https://martinemde@github.com/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@github.com:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => "ssh",
-        :user              => "git",
-        :password          => nil,
-        :host              => "github.com",
-        :port              => nil,
-        :path              => "/martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :ssh?              => true,
-        :scp?              => false,
-        :authenticated?    => true,
-        :interactive_authenticated? => false,
-        :github?           => true,
-        :gitlab?           => false,
-        :bitbucket?        => false,
-        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
+        scheme: "ssh",
+        user: "git",
+        password: nil,
+        host: "github.com",
+        port: nil,
+        path: "/martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        ssh?: true,
+        scp?: false,
+        authenticated?: true,
+        interactive_authenticated?: false,
+        github?: true,
+        gitlab?: false,
+        bitbucket?: false,
+        to_web_uri: Addressable::URI.parse("https://github.com/martinemde/gitable")
       })
     end
 
     describe_uri "https://github.com/martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git://github.com/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@github.com:martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@github.com:/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("ssh://git@github.com/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git://github.com/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@github.com:martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@github.com:/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@github.com:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => "https",
-        :user              => nil,
-        :password          => nil,
-        :host              => "github.com",
-        :port              => nil,
-        :path              => "/martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :ssh?              => false,
-        :scp?              => false,
-        :github?           => true,
-        :gitlab?           => false,
-        :bitbucket?        => false,
-        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
+        scheme: "https",
+        user: nil,
+        password: nil,
+        host: "github.com",
+        port: nil,
+        path: "/martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        ssh?: false,
+        scp?: false,
+        github?: true,
+        gitlab?: false,
+        bitbucket?: false,
+        to_web_uri: Addressable::URI.parse("https://github.com/martinemde/gitable")
       })
     end
 
     describe_uri "https://martinemde@github.com/martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git://github.com/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@github.com:martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@github.com:/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('https://github.com/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("ssh://git@github.com/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git://github.com/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@github.com:martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@github.com:/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("https://github.com/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@github.com:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => "https",
-        :user              => "martinemde",
-        :password          => nil,
-        :host              => "github.com",
-        :port              => nil,
-        :path              => "/martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :ssh?              => false,
-        :scp?              => false,
-        :github?           => true,
-        :gitlab?           => false,
-        :bitbucket?        => false,
-        :authenticated?    => true,
-        :interactive_authenticated? => true,
-        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
+        scheme: "https",
+        user: "martinemde",
+        password: nil,
+        host: "github.com",
+        port: nil,
+        path: "/martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        ssh?: false,
+        scp?: false,
+        github?: true,
+        gitlab?: false,
+        bitbucket?: false,
+        authenticated?: true,
+        interactive_authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://github.com/martinemde/gitable")
       })
     end
 
     describe_uri "git://github.com/martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@github.com:martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@github.com:/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('https://martinemde@github.com/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("ssh://git@github.com/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@github.com:martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@github.com:/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("https://martinemde@github.com/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@github.com:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => "git",
-        :user              => nil,
-        :password          => nil,
-        :host              => "github.com",
-        :port              => nil,
-        :path              => "/martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :ssh?              => false,
-        :scp?              => false,
-        :github?           => true,
-        :gitlab?           => false,
-        :bitbucket?        => false,
-        :authenticated?    => false,
-        :interactive_authenticated? => false,
-        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
+        scheme: "git",
+        user: nil,
+        password: nil,
+        host: "github.com",
+        port: nil,
+        path: "/martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        ssh?: false,
+        scp?: false,
+        github?: true,
+        gitlab?: false,
+        bitbucket?: false,
+        authenticated?: false,
+        interactive_authenticated?: false,
+        to_web_uri: Addressable::URI.parse("https://github.com/martinemde/gitable")
       })
     end
 
     describe_uri "git@github.com:martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::ScpURI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::ScpURI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('ssh://git@github.com/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git://github.com/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('https://martinemde@github.com/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@github.com:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("ssh://git@github.com/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git://github.com/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("https://martinemde@github.com/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@github.com:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => nil,
-        :inferred_scheme   => 'ssh',
-        :user              => "git",
-        :password          => nil,
-        :host              => "github.com",
-        :port              => nil,
-        :path              => "martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :project_name      => "gitable",
-        :ssh?              => true,
-        :scp?              => true,
-        :authenticated?    => true,
-        :interactive_authenticated? => false,
-        :github?           => true,
-        :gitlab?           => false,
-        :bitbucket?        => false,
-        :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
+        scheme: nil,
+        inferred_scheme: "ssh",
+        user: "git",
+        password: nil,
+        host: "github.com",
+        port: nil,
+        path: "martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        project_name: "gitable",
+        ssh?: true,
+        scp?: true,
+        authenticated?: true,
+        interactive_authenticated?: false,
+        github?: true,
+        gitlab?: false,
+        bitbucket?: false,
+        to_web_uri: Addressable::URI.parse("https://github.com/martinemde/gitable")
       })
     end
 
     describe_uri "ssh://git@bitbucket.org/martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('git://bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@bitbucket.org:martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@bitbucket.org:/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('https://martinemde@bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@bitbucket.org:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("git://bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@bitbucket.org:martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@bitbucket.org:/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("https://martinemde@bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@bitbucket.org:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => "ssh",
-        :user              => "git",
-        :password          => nil,
-        :host              => "bitbucket.org",
-        :port              => nil,
-        :path              => "/martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :ssh?              => true,
-        :scp?              => false,
-        :authenticated?    => true,
-        :interactive_authenticated? => false,
-        :github?           => false,
-        :gitlab?           => false,
-        :bitbucket?        => true,
-        :to_web_uri        => Addressable::URI.parse("https://bitbucket.org/martinemde/gitable"),
+        scheme: "ssh",
+        user: "git",
+        password: nil,
+        host: "bitbucket.org",
+        port: nil,
+        path: "/martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        ssh?: true,
+        scp?: false,
+        authenticated?: true,
+        interactive_authenticated?: false,
+        github?: false,
+        gitlab?: false,
+        bitbucket?: true,
+        to_web_uri: Addressable::URI.parse("https://bitbucket.org/martinemde/gitable")
       })
     end
 
     describe_uri "https://bitbucket.org/martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('ssh://git@bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git://bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@bitbucket.org:martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@bitbucket.org:/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@bitbucket.org:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("ssh://git@bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git://bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@bitbucket.org:martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@bitbucket.org:/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@bitbucket.org:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => "https",
-        :user              => nil,
-        :password          => nil,
-        :host              => "bitbucket.org",
-        :port              => nil,
-        :path              => "/martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :ssh?              => false,
-        :scp?              => false,
-        :github?           => false,
-        :gitlab?           => false,
-        :bitbucket?        => true,
-        :to_web_uri        => Addressable::URI.parse("https://bitbucket.org/martinemde/gitable"),
+        scheme: "https",
+        user: nil,
+        password: nil,
+        host: "bitbucket.org",
+        port: nil,
+        path: "/martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        ssh?: false,
+        scp?: false,
+        github?: false,
+        gitlab?: false,
+        bitbucket?: true,
+        to_web_uri: Addressable::URI.parse("https://bitbucket.org/martinemde/gitable")
       })
     end
 
     describe_uri "https://martinemde@bitbucket.org/martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('ssh://git@bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git://bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@bitbucket.org:martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@bitbucket.org:/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('https://bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@bitbucket.org:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("ssh://git@bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git://bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@bitbucket.org:martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@bitbucket.org:/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("https://bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@bitbucket.org:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => "https",
-        :user              => "martinemde",
-        :password          => nil,
-        :host              => "bitbucket.org",
-        :port              => nil,
-        :path              => "/martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :ssh?              => false,
-        :scp?              => false,
-        :github?           => false,
-        :gitlab?           => false,
-        :bitbucket?        => true,
-        :authenticated?    => true,
-        :interactive_authenticated? => true,
-        :to_web_uri        => Addressable::URI.parse("https://bitbucket.org/martinemde/gitable"),
+        scheme: "https",
+        user: "martinemde",
+        password: nil,
+        host: "bitbucket.org",
+        port: nil,
+        path: "/martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        ssh?: false,
+        scp?: false,
+        github?: false,
+        gitlab?: false,
+        bitbucket?: true,
+        authenticated?: true,
+        interactive_authenticated?: true,
+        to_web_uri: Addressable::URI.parse("https://bitbucket.org/martinemde/gitable")
       })
     end
 
     describe_uri "git://bitbucket.org/martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::URI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::URI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('ssh://git@bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@bitbucket.org:martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git@bitbucket.org:/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('https://martinemde@bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@bitbucket.org:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("ssh://git@bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@bitbucket.org:martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git@bitbucket.org:/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("https://martinemde@bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@bitbucket.org:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => "git",
-        :user              => nil,
-        :password          => nil,
-        :host              => "bitbucket.org",
-        :port              => nil,
-        :path              => "/martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :ssh?              => false,
-        :scp?              => false,
-        :github?           => false,
-        :gitlab?           => false,
-        :bitbucket?        => true,
-        :authenticated?    => false,
-        :interactive_authenticated? => false,
-        :to_web_uri        => Addressable::URI.parse("https://bitbucket.org/martinemde/gitable"),
+        scheme: "git",
+        user: nil,
+        password: nil,
+        host: "bitbucket.org",
+        port: nil,
+        path: "/martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        ssh?: false,
+        scp?: false,
+        github?: false,
+        gitlab?: false,
+        bitbucket?: true,
+        authenticated?: false,
+        interactive_authenticated?: false,
+        to_web_uri: Addressable::URI.parse("https://bitbucket.org/martinemde/gitable")
       })
     end
 
     describe_uri "git@bitbucket.org:martinemde/gitable.git" do
       it { expect(subject.to_s).to eq(@uri) }
-      it { expect("#{subject}").to eq(@uri) }
-      it { expect(subject.inspect).to match(%r|^#<Gitable::ScpURI #{@uri}>$|) }
+      it { expect(subject.to_s).to eq(@uri) }
+      it { expect(subject.inspect).to match(%r{^#<Gitable::ScpURI #{@uri}>$}) }
       it { expect(subject).to be_equivalent(@uri) }
-      it { expect(subject).to be_equivalent('ssh://git@bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('git://bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to be_equivalent('https://martinemde@bitbucket.org/martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@othergit.com:martinemde/gitable.git') }
-      it { expect(subject).to_not be_equivalent('git@bitbucket.org:martinemde/not_gitable.git') }
+      it { expect(subject).to be_equivalent("ssh://git@bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("git://bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to be_equivalent("https://martinemde@bitbucket.org/martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@othergit.com:martinemde/gitable.git") }
+      it { expect(subject).to_not be_equivalent("git@bitbucket.org:martinemde/not_gitable.git") }
       it_sets({
-        :scheme            => nil,
-        :inferred_scheme   => 'ssh',
-        :user              => "git",
-        :password          => nil,
-        :host              => "bitbucket.org",
-        :port              => nil,
-        :path              => "martinemde/gitable.git",
-        :fragment          => nil,
-        :basename          => "gitable.git",
-        :project_name      => "gitable",
-        :ssh?              => true,
-        :scp?              => true,
-        :authenticated?    => true,
-        :interactive_authenticated? => false,
-        :github?           => false,
-        :gitlab?           => false,
-        :bitbucket?        => true,
-        :to_web_uri        => Addressable::URI.parse("https://bitbucket.org/martinemde/gitable"),
+        scheme: nil,
+        inferred_scheme: "ssh",
+        user: "git",
+        password: nil,
+        host: "bitbucket.org",
+        port: nil,
+        path: "martinemde/gitable.git",
+        fragment: nil,
+        basename: "gitable.git",
+        project_name: "gitable",
+        ssh?: true,
+        scp?: true,
+        authenticated?: true,
+        interactive_authenticated?: false,
+        github?: false,
+        gitlab?: false,
+        bitbucket?: true,
+        to_web_uri: Addressable::URI.parse("https://bitbucket.org/martinemde/gitable")
       })
     end
   end

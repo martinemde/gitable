@@ -1,9 +1,11 @@
-require 'addressable/uri'
+# frozen_string_literal: true
+
+require "addressable/uri"
 
 module Gitable
   class URI < Addressable::URI
-    SCP_REGEXP =  %r|^([^:/?#]+):([^:?#]*)$|
-    URIREGEX = %r|^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$|
+    SCP_REGEXP = %r{^([^:/?#]+):([^:?#]*)$}
+    URIREGEX = %r{^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$}
 
     ##
     # Parse a git repository URI into a URI object.
@@ -25,7 +27,7 @@ module Gitable
       # convert it to a string, then parse the string.
       # We do the check this way because we don't want to accidentally
       # cause a missing constant exception to be thrown.
-      if uri.class.name =~ /^URI\b/
+      if /^URI\b/.match?(uri.class.name)
         uri = uri.to_s
       end
 
@@ -38,15 +40,15 @@ module Gitable
 
       # This Regexp supplied as an example in RFC 3986, and it works great.
       fragments = uri.scan(URIREGEX)[0]
-      scheme    = fragments[1]
+      scheme = fragments[1]
       authority = fragments[3]
-      path      = fragments[4]
-      query     = fragments[6]
-      fragment  = fragments[8]
+      path = fragments[4]
+      query = fragments[6]
+      fragment = fragments[8]
       host = nil
 
       if authority
-        host = authority.gsub(/^([^\[\]]*)@/, '').gsub(/:([^:@\[\]]*?)$/, '')
+        host = authority.gsub(/^([^\[\]]*)@/, "").gsub(/:([^:@\[\]]*?)$/, "")
       else
         authority = scheme
       end
@@ -126,7 +128,7 @@ module Gitable
     end
 
     def host_match?(host)
-      normalized_host && normalized_host.include?(host)
+      normalized_host&.include?(host)
     end
 
     # Create a web link uri for repositories that follow the github pattern.
@@ -137,9 +139,9 @@ module Gitable
     #
     # @param [String] Scheme of the web uri (smart defaults)
     # @return [Addressable::URI] https://#{host}/#{path_without_git_extension}
-    def to_web_uri(uri_scheme='https')
+    def to_web_uri(uri_scheme = "https")
       return nil if normalized_host.to_s.empty?
-      Addressable::URI.new(:scheme => uri_scheme, :host => normalized_host, :port => normalized_port, :path => normalized_path.sub(%r#\.git/?$#, ''))
+      Addressable::URI.new(scheme: uri_scheme, host: normalized_host, port: normalized_port, path: normalized_path.sub(%r{\.git/?$}, ""))
     end
 
     # Tries to guess the project name of the repository.
@@ -162,17 +164,17 @@ module Gitable
     #
     # @return [Boolean] Is the URI local
     def local?
-      inferred_scheme == 'file'
+      inferred_scheme == "file"
     end
 
     # Scheme inferred by the URI (URIs without hosts or schemes are assumed to be 'file')
     #
     # @return [Boolean] Is the URI local
     def inferred_scheme
-      if normalized_scheme == 'file'
-        'file'
+      if normalized_scheme == "file"
+        "file"
       elsif (normalized_scheme.nil? || normalized_scheme.empty?) && (normalized_host.nil? || normalized_host.empty?)
-        'file'
+        "file"
       else
         normalized_scheme
       end
@@ -226,7 +228,7 @@ module Gitable
       else
         # if the path is absolute, we can assume it's the same for all users (so the user doesn't have to match).
         normalized_path.delete_suffix("/") == other.normalized_path.delete_suffix("/") &&
-          (path[0] == '/' || normalized_user == other.normalized_user)
+          (path[0] == "/" || normalized_user == other.normalized_user)
       end
     end
 
@@ -234,7 +236,7 @@ module Gitable
     #
     # @return [String] I'll get you next time Gadget, NEXT TIME!
     def inspect
-      "#<#{self.class.to_s} #{to_s}>"
+      "#<#{self.class} #{self}>"
     end
 
     # Set an extension name, replacing one if it exists.
@@ -247,9 +249,8 @@ module Gitable
     # @param [String] New extension name
     # @return [String] extname result
     def extname=(new_ext)
-      return nil if basename.to_s.empty?
-      self.basename = "#{basename.sub(%r#\.git/?$#, '')}.#{new_ext.sub(/^\.+/,'')}"
-      extname
+      return if basename.to_s.empty?
+      self.basename = "#{basename.sub(%r{\.git/?$}, "")}.#{new_ext.sub(/^\.+/, "")}"
     end
 
     # Set the '.git' extension name, replacing one if it exists.
@@ -265,7 +266,7 @@ module Gitable
     # Addressable does basename wrong when there's no basename.
     # It returns "/" for something like "http://host.com/"
     def basename
-      super == "/" ? "" : super
+      (super == "/") ? "" : super
     end
 
     # Set the basename, replacing it if it exists.
@@ -279,11 +280,11 @@ module Gitable
       else
         rpath = normalized_path.reverse
         # replace the last occurrence of the basename with basename.ext
-        self.path = rpath.sub(%r|#{Regexp.escape(base.reverse)}|, new_basename.reverse).reverse
+        self.path = rpath.sub(%r{#{Regexp.escape(base.reverse)}}, new_basename.reverse).reverse
       end
       basename
     end
   end
 end
 
-require 'gitable/scp_uri'
+require "gitable/scp_uri"

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Gitable::URI, ".heuristic_parse" do
   it "returns a Gitable::URI" do
@@ -13,7 +13,7 @@ describe Gitable::URI, ".heuristic_parse" do
     "ssh://user@host.xz:1234/path/to/repo.git/",
     "user@host.xz:path/to/repo.git",
     "user@host.xz:path/to/repo.git/",
-    "git@github.com:martinemde/gitable.git",
+    "git@github.com:martinemde/gitable.git"
   ].each do |uri|
     it "doesn't break the already valid URI: #{uri.inspect}" do
       expect(Gitable::URI.heuristic_parse(uri).to_s).to eq(uri)

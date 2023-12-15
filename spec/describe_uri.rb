@@ -21,8 +21,12 @@ module DescribeURI
       end
     end
 
-    def method_missing(*args, &block)
-      @example_group.send(*args, &block)
+    def method_missing(...)
+      @example_group.send(...)
+    end
+
+    def respond_to_missing?(...)
+      @example_group.respond_to_missing?(...)
     end
   end
 end

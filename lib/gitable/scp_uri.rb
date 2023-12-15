@@ -1,23 +1,23 @@
-require 'addressable/uri'
-require 'gitable/uri'
+# frozen_string_literal: true
+
+require "addressable/uri"
+require "gitable/uri"
 
 module Gitable
   class ScpURI < Gitable::URI
-
     ##
     # Deprecated: This serves no purpose. You might as well just parse the URI.
     def self.scp?(uri)
-      $stderr.puts "DEPRECATED: Gitable::ScpURI.scp?. You're better off parsing the URI and checking #scp?."
+      warn "DEPRECATED: Gitable::ScpURI.scp?. You're better off parsing the URI and checking #scp?."
       Gitable::URI.parse(uri).scp?
     end
 
     ##
     # Deprecated: This serves no purpose. Just use Gitable::URI.parse.
     def self.parse(uri)
-      $stderr.puts "DEPRECATED: Gitable::ScpURI.parse just runs Gitable::URI.parse. Please use this directly."
+      warn "DEPRECATED: Gitable::ScpURI.parse just runs Gitable::URI.parse. Please use this directly."
       Gitable::URI.parse(uri)
     end
-
 
     # Keep URIs like this as they were input:
     #
@@ -31,7 +31,7 @@ module Gitable
     # @return [String] The same path passed in.
     def path=(new_path)
       super
-      if new_path[0] != '/' # addressable adds a / but scp-style uris are altered by this behavior
+      if new_path[0] != "/" # addressable adds a / but scp-style uris are altered by this behavior
         @path = path.delete_prefix("/")
         @normalized_path = nil
         validate
@@ -47,13 +47,13 @@ module Gitable
     def to_s
       @uri_string ||= "#{normalized_authority}:#{normalized_path}".force_encoding(Encoding::UTF_8)
     end
-    alias to_str to_s
+    alias_method :to_str, :to_s
 
     # Return the actual scheme even though we don't show it
     #
     # @return [String] always 'ssh' for scp style URIs
     def inferred_scheme
-      'ssh'
+      "ssh"
     end
 
     # Scp style URIs are always ssh
@@ -95,7 +95,7 @@ module Gitable
     end
 
     def invalid!(reason)
-      raise InvalidURIError, "#{reason}: '#{to_s}'"
+      raise InvalidURIError, "#{reason}: '#{self}'"
     end
   end
 end
