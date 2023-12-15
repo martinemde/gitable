@@ -1,14 +1,6 @@
 # Gitable
 
-[![Gem Version](https://badge.fury.io/rb/gitable.png)][gem]
-[![Build Status](https://travis-ci.org/martinemde/gitable.png?branch=master)][travis]
-[![Dependency Status](https://gemnasium.com/martinemde/gitable.png?travis)][gemnasium]
-[![Code Climate](https://codeclimate.com/github/martinemde/gitable.png)][codeclimate]
-
-[gem]: https://rubygems.org/gems/gitable
-[travis]: https://travis-ci.org/martinemde/gitable
-[gemnasium]: https://gemnasium.com/martinemde/gitable
-[codeclimate]: https://codeclimate.com/github/martinemde/gitable
+[`gitable` on RubyGems.org](https://rubygems.org/gems/gitable).
 
 ## A git remote URI parser backed by Addressable
 
@@ -105,4 +97,4 @@ URIs.
 
 ## Copyright
 
-Copyright (c) 2014 Martin Emde. See LICENSE for details.
+Copyright (c) 2023 Martin Emde. See LICENSE for details.
