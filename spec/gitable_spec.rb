@@ -575,6 +575,7 @@ describe Gitable::URI do
         :authenticated?    => true,
         :interactive_authenticated? => false,
         :github?           => true,
+        :gitlab?           => false,
         :bitbucket?        => false,
         :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
@@ -603,6 +604,7 @@ describe Gitable::URI do
         :ssh?              => false,
         :scp?              => false,
         :github?           => true,
+        :gitlab?           => false,
         :bitbucket?        => false,
         :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
@@ -632,6 +634,7 @@ describe Gitable::URI do
         :ssh?              => false,
         :scp?              => false,
         :github?           => true,
+        :gitlab?           => false,
         :bitbucket?        => false,
         :authenticated?    => true,
         :interactive_authenticated? => true,
@@ -662,6 +665,7 @@ describe Gitable::URI do
         :ssh?              => false,
         :scp?              => false,
         :github?           => true,
+        :gitlab?           => false,
         :bitbucket?        => false,
         :authenticated?    => false,
         :interactive_authenticated? => false,
@@ -695,6 +699,7 @@ describe Gitable::URI do
         :authenticated?    => true,
         :interactive_authenticated? => false,
         :github?           => true,
+        :gitlab?           => false,
         :bitbucket?        => false,
         :to_web_uri        => Addressable::URI.parse("https://github.com/martinemde/gitable"),
       })
@@ -725,6 +730,7 @@ describe Gitable::URI do
         :authenticated?    => true,
         :interactive_authenticated? => false,
         :github?           => false,
+        :gitlab?           => false,
         :bitbucket?        => true,
         :to_web_uri        => Addressable::URI.parse("https://bitbucket.org/martinemde/gitable"),
       })
@@ -753,6 +759,7 @@ describe Gitable::URI do
         :ssh?              => false,
         :scp?              => false,
         :github?           => false,
+        :gitlab?           => false,
         :bitbucket?        => true,
         :to_web_uri        => Addressable::URI.parse("https://bitbucket.org/martinemde/gitable"),
       })
@@ -782,6 +789,7 @@ describe Gitable::URI do
         :ssh?              => false,
         :scp?              => false,
         :github?           => false,
+        :gitlab?           => false,
         :bitbucket?        => true,
         :authenticated?    => true,
         :interactive_authenticated? => true,
@@ -812,6 +820,7 @@ describe Gitable::URI do
         :ssh?              => false,
         :scp?              => false,
         :github?           => false,
+        :gitlab?           => false,
         :bitbucket?        => true,
         :authenticated?    => false,
         :interactive_authenticated? => false,
@@ -845,6 +854,7 @@ describe Gitable::URI do
         :authenticated?    => true,
         :interactive_authenticated? => false,
         :github?           => false,
+        :gitlab?           => false,
         :bitbucket?        => true,
         :to_web_uri        => Addressable::URI.parse("https://bitbucket.org/martinemde/gitable"),
       })
