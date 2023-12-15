@@ -31,8 +31,8 @@ module Gitable
     # @return [String] The same path passed in.
     def path=(new_path)
       super
-      if new_path[0..0] != '/' # addressable adds a / but scp-style uris are altered by this behavior
-        @path = path.sub(%r|^/+|,'')
+      if new_path[0] != '/' # addressable adds a / but scp-style uris are altered by this behavior
+        @path = path.delete_prefix("/")
         @normalized_path = nil
         validate
       end
@@ -45,14 +45,7 @@ module Gitable
     #
     # @return [String] The URI as a string.
     def to_s
-      @uri_string ||=
-        begin
-          uri_string = "#{normalized_authority}:#{normalized_path}"
-          if uri_string.respond_to?(:force_encoding)
-            uri_string.force_encoding(Encoding::UTF_8)
-          end
-          uri_string
-        end
+      @uri_string ||= "#{normalized_authority}:#{normalized_path}".force_encoding(Encoding::UTF_8)
     end
     alias to_str to_s
 
@@ -82,19 +75,19 @@ module Gitable
     def validate
       return if @validation_deferred
 
-      if host.to_s.empty?
+      if host.nil? || host.empty?
         invalid! "Hostname segment missing"
       end
 
-      if !scheme.to_s.empty?
+      if scheme && !scheme.empty?
         invalid! "Scp style URI must not have a scheme"
       end
 
-      if !port.to_s.empty?
+      if port
         invalid! "Scp style URI cannot have a port"
       end
 
-      if path.to_s.empty?
+      if path.nil? || path.empty?
         invalid! "Absolute URI missing hierarchical segment"
       end
 

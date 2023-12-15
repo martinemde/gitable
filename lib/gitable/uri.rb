@@ -16,8 +16,8 @@ module Gitable
     # @raise [Gitable::URI::InvalidURIError] When the uri is *total* rubbish.
     #
     def self.parse(uri)
-      return nil if uri.nil?
-      return uri.dup if uri.kind_of?(self)
+      return unless uri
+      return uri.dup if uri.is_a?(self)
 
       # Copied from Addressable to speed up our parsing.
       #
@@ -34,7 +34,7 @@ module Gitable
         uri = uri.to_str
       rescue TypeError, NoMethodError
         raise TypeError, "Can't convert #{uri.class} into String."
-      end if not uri.is_a? String
+      end
 
       # This Regexp supplied as an example in RFC 3986, and it works great.
       fragments = uri.scan(URIREGEX)[0]
@@ -52,14 +52,14 @@ module Gitable
       end
 
       if host.nil? && uri =~ SCP_REGEXP
-        Gitable::ScpURI.new(:authority => $1, :path => $2)
+        Gitable::ScpURI.new(authority: $1, path: $2)
       else
         new(
-          :scheme    => scheme,
-          :authority => authority,
-          :path      => path,
-          :query     => query,
-          :fragment  => fragment
+          scheme: scheme,
+          authority: authority,
+          path: path,
+          query: query,
+          fragment: fragment
         )
       end
     end
@@ -92,7 +92,8 @@ module Gitable
     # @raise [Gitable::URI::InvalidURIError] When the uri is *total* rubbish.
     #
     def self.heuristic_parse(uri)
-      return uri if uri.nil? || uri.kind_of?(self)
+      return unless uri
+      return uri if uri.is_a?(self)
 
       # Addressable::URI.heuristic_parse _does_ return the correct type :)
       gitable = super # boo inconsistency
@@ -107,21 +108,25 @@ module Gitable
     #
     # @return [Boolean] github.com is the host?
     def github?
-      !!normalized_host.to_s.match(/\.?github.com$/)
+      host_match?("github.com")
     end
 
     # Is this uri a gitlab uri?
     #
     # @return [Boolean] gitlab.com is the host?
     def gitlab?
-      !!normalized_host.to_s.match(/\.?gitlab.com$/)
+      host_match?("gitlab.com")
     end
 
     # Is this uri a bitbucket uri?
     #
     # @return [Boolean] bitbucket.org is the host?
     def bitbucket?
-      !!normalized_host.to_s.match(/\.?bitbucket.org$/)
+      host_match?("bitbucket.org")
+    end
+
+    def host_match?(host)
+      normalized_host && normalized_host.include?(host)
     end
 
     # Create a web link uri for repositories that follow the github pattern.
@@ -141,11 +146,16 @@ module Gitable
     #
     # @return [String] Project name without .git
     def project_name
-      basename.sub(/\.git\/?$/,'')
+      p = basename.delete_suffix("/")
+      p.delete_suffix!(".git")
+      p
     end
 
     def org_project
-      normalized_path.sub(/^\//,'').sub(/\.git\/?$/,'')
+      op = normalized_path.delete_prefix("/")
+      op.delete_suffix!("/")
+      op.delete_suffix!(".git")
+      op
     end
 
     # Detect local filesystem URIs.
@@ -159,7 +169,9 @@ module Gitable
     #
     # @return [Boolean] Is the URI local
     def inferred_scheme
-      if normalized_scheme == 'file' || (normalized_scheme.to_s.empty? && normalized_host.to_s.empty?)
+      if normalized_scheme == 'file'
+        'file'
+      elsif (normalized_scheme.nil? || normalized_scheme.empty?) && (normalized_host.nil? || normalized_host.empty?)
         'file'
       else
         normalized_scheme
@@ -170,7 +182,7 @@ module Gitable
     #
     # @return [Boolean] true if the URI uses ssh?
     def ssh?
-      !!normalized_scheme.to_s.match(/ssh/)
+      !normalized_scheme.nil? && normalized_scheme.include?("ssh")
     end
 
     # Is this an scp formatted uri? (No, always)
@@ -213,7 +225,7 @@ module Gitable
         org_project == other.org_project
       else
         # if the path is absolute, we can assume it's the same for all users (so the user doesn't have to match).
-        normalized_path.sub(/\/$/,'') == other.normalized_path.sub(/\/$/,'') &&
+        normalized_path.delete_suffix("/") == other.normalized_path.delete_suffix("/") &&
           (path[0] == '/' || normalized_user == other.normalized_user)
       end
     end
