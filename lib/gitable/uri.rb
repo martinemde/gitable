@@ -205,7 +205,7 @@ module Gitable
     #
     # @return [Boolean] true if the URI has a user, but is not using ssh
     def interactive_authenticated?
-      !ssh? && (!normalized_user.nil? && normalized_password.nil?)
+      !ssh? && !normalized_user.nil? && normalized_password.nil?
     end
 
     # Detect if two URIs are equivalent versions of the same uri.
