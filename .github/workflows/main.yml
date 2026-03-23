@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [ '3.3', '3.4', '4.0', head ]
+        ruby: [ '3.3', '3.4', '4.0', head, jruby, truffleruby ]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Ruby
