@@ -92,7 +92,7 @@ uri for a few of the popular git webhosts. It also runs through Addressable's
 
 `heuristic_parse` is currently very limited. If the url doesn't end in .git, it
 switches http:// to git:// and adds .git to the basename.
-This works fine for github.com and gitorious.org but will happily screw up other
+This works fine for urls that follow github.com patterns but will happily screw up other
 URIs.
 
 ## Copyright
