@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = %q(Addressable::URI for Git "URIs" with special handling for scp-style remotes that Addressable intentionally doesn't parse.)
   spec.license = "MIT"
 
-  # spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.3.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/martinemde/gitable"
